@@ -7,6 +7,129 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class CabanaSchema extends BaseModel {
+  static $columns = ['capacidad', 'createdAt', 'descripcion', 'habitaciones', 'idCabana', 'idEstado', 'imgUrl', 'nombre', 'precioPorNoche', 'slug', 'updatedAt'] as const
+  $columns = CabanaSchema.$columns
+  @column()
+  declare capacidad: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare descripcion: string
+  @column()
+  declare habitaciones: number
+  @column({ isPrimary: true })
+  declare idCabana: number
+  @column()
+  declare idEstado: number | null
+  @column()
+  declare imgUrl: string | null
+  @column()
+  declare nombre: string
+  @column()
+  declare precioPorNoche: number
+  @column()
+  declare slug: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}
+
+export class CabanaServicioSchema extends BaseModel {
+  static $columns = ['id', 'idCabana', 'idServicios'] as const
+  $columns = CabanaServicioSchema.$columns
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare idCabana: number | null
+  @column()
+  declare idServicios: number | null
+}
+
+export class EstadoCabanaSchema extends BaseModel {
+  static $columns = ['descEstado', 'idEstado'] as const
+  $columns = EstadoCabanaSchema.$columns
+  @column()
+  declare descEstado: string
+  @column({ isPrimary: true })
+  declare idEstado: number
+}
+
+export class EstadoReservaSchema extends BaseModel {
+  static $columns = ['estado', 'idEstadoReserva'] as const
+  $columns = EstadoReservaSchema.$columns
+  @column()
+  declare estado: string
+  @column({ isPrimary: true })
+  declare idEstadoReserva: number
+}
+
+export class HuespedSchema extends BaseModel {
+  static $columns = ['apellido', 'createdAt', 'dni', 'idHuesped', 'nombre', 'telefono'] as const
+  $columns = HuespedSchema.$columns
+  @column()
+  declare apellido: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare dni: string
+  @column({ isPrimary: true })
+  declare idHuesped: number
+  @column()
+  declare nombre: string
+  @column()
+  declare telefono: string | null
+}
+
+export class HuespedReservaSchema extends BaseModel {
+  static $columns = ['id', 'idHuesped', 'idReserva'] as const
+  $columns = HuespedReservaSchema.$columns
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare idHuesped: number | null
+  @column()
+  declare idReserva: number | null
+}
+
+export class ReservaSchema extends BaseModel {
+  static $columns = ['createdAt', 'fechaFin', 'fechaInicio', 'idCabana', 'idEstadoReserva', 'idReserva', 'idUsuario', 'precioTotal'] as const
+  $columns = ReservaSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.date()
+  declare fechaFin: DateTime
+  @column.date()
+  declare fechaInicio: DateTime
+  @column()
+  declare idCabana: number | null
+  @column()
+  declare idEstadoReserva: number | null
+  @column({ isPrimary: true })
+  declare idReserva: number
+  @column()
+  declare idUsuario: number | null
+  @column()
+  declare precioTotal: string
+}
+
+export class RolUsuarioSchema extends BaseModel {
+  static $columns = ['idRol', 'rol'] as const
+  $columns = RolUsuarioSchema.$columns
+  @column({ isPrimary: true })
+  declare idRol: number
+  @column()
+  declare rol: string
+}
+
+export class ServicioSchema extends BaseModel {
+  static $columns = ['descripcion', 'idServicios'] as const
+  $columns = ServicioSchema.$columns
+  @column()
+  declare descripcion: string
+  @column({ isPrimary: true })
+  declare idServicios: number
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns
@@ -22,4 +145,23 @@ export class UserSchema extends BaseModel {
   declare password: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+}
+
+export class UsuarioSchema extends BaseModel {
+  static $columns = ['apellido', 'contrasena', 'createdAt', 'email', 'idRol', 'idUsuario', 'nombre'] as const
+  $columns = UsuarioSchema.$columns
+  @column()
+  declare apellido: string
+  @column()
+  declare contrasena: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare email: string
+  @column()
+  declare idRol: number | null
+  @column({ isPrimary: true })
+  declare idUsuario: number
+  @column()
+  declare nombre: string
 }
