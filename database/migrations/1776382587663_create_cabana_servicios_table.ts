@@ -11,7 +11,7 @@ export default class extends BaseSchema {
         .integer('id_cabana')
         .unsigned()
         .references('id_cabana')
-        .inTable('cabanas')
+        .inTable('cabana')
         .onDelete('CASCADE')
 
 
