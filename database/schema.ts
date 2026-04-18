@@ -148,7 +148,7 @@ export class UserSchema extends BaseModel {
 }
 
 export class UsuarioSchema extends BaseModel {
-  static $columns = ['apellido', 'contrasena', 'createdAt', 'email', 'idRol', 'idUsuario', 'nombre'] as const
+  static $columns = ['apellido', 'contrasena', 'createdAt', 'dni', 'email', 'idRol', 'idUsuario', 'nombre'] as const
   $columns = UsuarioSchema.$columns
   @column()
   declare apellido: string
@@ -156,6 +156,8 @@ export class UsuarioSchema extends BaseModel {
   declare contrasena: string
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
+  @column()
+  declare dni: string
   @column()
   declare email: string
   @column()
