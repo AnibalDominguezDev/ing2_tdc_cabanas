@@ -11,7 +11,7 @@ export default class extends BaseSchema {
       table.float('precio_por_noche').notNullable()
       table.integer('capacidad').defaultTo(1).notNullable()
       table.integer('habitaciones').defaultTo(1).notNullable()
-      table.string('slug').nullable()
+      table.string('slug').nullable().unique()
       table.string('img_url').nullable()
       table
         .integer('id_estado')
