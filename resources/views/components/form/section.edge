@@ -1,0 +1,12 @@
+<div class="grid lg:grid-cols-3 sm:grid-cols-1 gap-4 mb-8">
+    {{-- Columna Izquierda: Encabezado --}}
+    <div class="">
+        <h2 class="text-2xl font-semibold mb-4 text-[#2D332D]">{{ title }}</h2>
+        <p class="text-[#5D635D]">{{ description }}</p>
+    </div>
+
+    {{-- Columna Derecha: Contenido --}}
+    <div class="col-span-2 bg-[#F4F1EA] p-10 rounded-xl space-y-8">
+        {{{ await $slots.main() }}}
+    </div>
+</div>

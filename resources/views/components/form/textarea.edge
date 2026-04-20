@@ -1,0 +1,10 @@
+<div>
+    <label for="{{ name }}" class="block text-sm font-bold mb-3 uppercase tracking-wider">
+        {{ label }}
+    </label>
+    @inputError(name)
+    <p class="text-red-600 text-xs mt-2">{{ $messages.join(', ') }}</p>
+    @end
+    <textarea name="{{ name }}" id="{{ name }}" rows="{{ rows || 5 }}" placeholder="{{ placeholder || '' }}"
+        class="w-full p-4 rounded-xl border-none bg-white shadow-sm focus:ring-2 focus:ring-[#2D332D] transition-all placeholder:text-[#B2B2B2] resize-none">{{ value || '' }}</textarea>
+</div>

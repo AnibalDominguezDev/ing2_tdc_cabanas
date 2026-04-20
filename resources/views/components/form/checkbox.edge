@@ -1,0 +1,15 @@
+<label
+    class="flex items-center gap-4 p-5 bg-white rounded-xl shadow-sm border border-transparent hover:border-[#D1C7BD] transition-all cursor-pointer group">
+    <div class="relative flex items-center justify-center">
+        <input type="checkbox" name="{{ name }}[]" value="{{ value }}"
+            class="peer h-6 w-6 appearance-none rounded-md border-2 border-[#E5E1DA] bg-white checked:bg-[#2D332D] checked:border-[#2D332D] transition-all cursor-pointer">
+        <svg class="absolute w-4 h-4 text-white pointer-events-none hidden peer-checked:block"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+    </div>
+    <span class="text-[#2D332D] font-medium text-base group-hover:text-black">
+        {{ label }}
+    </span>
+</label>

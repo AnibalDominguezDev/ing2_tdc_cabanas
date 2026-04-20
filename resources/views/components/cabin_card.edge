@@ -1,0 +1,54 @@
+<article class="group bg-neutral-bg overflow-hidden  border-neutral-200 hover:shadow-md transition-shadow duration-300">
+
+    <div class="relative h-56 overflow-hidden">
+        <img src="{{ 'https://placehold.co/600x400?text=Cabaña' }}" alt="{{ cabin.nombre }}"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <div
+            class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-semibold text-primary uppercase tracking-wider shadow-sm">
+            {{ cabin.capacidad }} Huéspedes
+        </div>
+    </div>
+
+
+    <div class="my-4 p-5 flex flex-col h-[calc(100%-14rem)]">
+        <div class="grow">
+            <h3 class="text-primary font-serif text-2xl italic leading-tight mb-2">
+                {{ cabin.nombre }}
+
+            </h3>
+
+            <p class="text-gray-500 text-sm line-clamp-2 mb-4">
+                {{ cabin.descripcion }}
+            </p>
+
+
+            @if(cabin.servicios && cabin.servicios.length > 0)
+            <div class="flex flex-wrap gap-3 my-4">
+                @each(servicio in cabin.servicios.slice(0, 4))
+                <div class="flex items-center text-gray-500" title="{{ servicio.descripcion }}">
+
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1"></span>
+                    <span class="text-xs">{{ servicio.descripcion }}</span>
+                </div>
+                @end
+            </div>
+            @endif
+        </div>
+
+
+        <div class="my-4 pt-4 border-t border-neutral-bg flex items-center justify-between">
+            <div>
+                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Por noche</p>
+                <p class="text-secondary font-bold text-xl">
+                    ${{ cabin.precioPorNoche.toLocaleString('es-AR') }}
+                </p>
+            </div>
+
+            <a href="{{route('cabanas.mostrar', { slug: cabin.slug }) }}""
+                class=" inline-flex items-center bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium
+                hover:bg-opacity-90 transition-colors">
+                Ver detalles
+            </a>
+        </div>
+    </div>
+</article>
