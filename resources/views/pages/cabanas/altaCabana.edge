@@ -1,0 +1,130 @@
+@layout()
+
+<section class="min-h-screen bg-[#FAF9F6] font-sans text-[#2D332D] py-10 px-20">
+    <h1 class="text-6xl font-serif italic leading-tight mb-6">
+        Agregar una nueva <span class="not-italic">Cabaña</span>
+    </h1>
+    <p class="text-lg text-[#5D635D] leading-relaxed mb-12">
+        Complete los siguientes campos una nueva cabaña a la colección. <br>
+        Los campos con (*) son obligatorios.
+    </p>
+
+    <form action="{{ route('guardar') }}" method="POST">
+        {{ csrfField() }}
+        @if(cabana)
+        <input type="hidden" name="_method" value="PUT">
+        @endif
+
+
+        @component('components/form/section', {
+        title: 'Información Básica',
+        description: 'Detalle las comodidades que ofrece la unidad'})
+
+        @!component('components/form/input', {
+        name: 'nombre',
+        label: 'Nombre de la Cabaña (*)',
+        placeholder: 'ej., El Alerce Susurrante',
+        value: old('nombre') || cabana?.nombre || ''
+        })
+
+        @!component('components/form/textarea', {
+        name: 'descripcion',
+        label: 'Descripción Detallada (*)',
+        placeholder: 'Describa el aroma de la madera, la vista desde la terraza...',
+        value: old('descripcion') || cabana?.descripcion || ''
+        })
+
+        <div class="grid grid-cols-2 gap-6">
+            @!component('components/form/input', {
+            name: 'capacidad',
+            type: 'number',
+            label: 'Huéspedes Máx. (*)',
+            value: old('capacidad') || cabana?.capacidad || ''
+            })
+
+            @!component('components/form/input', {
+            name: 'habitaciones',
+            type: 'number',
+            label: 'Cantidad de Habitaciones (*)',
+            value: old('habitaciones') || cabana?.habitaciones || ''
+            })
+        </div>
+        @end
+
+
+        @component('components/form/section', {
+        title: 'Servicios',
+        description: 'Seleccione las comodidades que ofrece esta cabaña.'
+        })
+        <div class="grid grid-cols-3 gap-4">
+
+            @each(servicio in ['Wi fi', 'Piscina', 'Estacionamiento', 'Parrilla', 'Desayuno', 'Aire Acondicionado'])
+            @!component('components/form/checkbox', {
+            name: 'servicios',
+            value: servicio,
+            label: servicio
+            })
+            @endeach
+        </div>
+        @end
+
+
+        @component('components/form/section', {
+        title: 'Imágenes',
+        description: 'Suba fotografías de alta calidad para cautivar a los huéspedes.'
+        })
+        <div
+            class="flex flex-col items-center justify-center w-full h-80 border-2 border-dashed border-[#D1C7BD] rounded-md bg-[#F4F1EA] hover:bg-[#EBE7DF] transition-colors duration-300">
+            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-16 h-16 mb-6 text-[#A3978D]" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V14.5a.5.5 0 01-1 0V13H5.5z">
+                    </path>
+                    <path
+                        d="M10 4.5a.5.5 0 01.5.5v4.172l1.146-1.147a.5.5 0 01.708.708l-2 2a.5.5 0 01-.708 0l-2-2a.5.5 0 11.708-.708L9.5 9.172V5a.5.5 0 01.5-.5z">
+                    </path>
+                </svg>
+                <p class="mb-2 text-xl font-bold text-[#2D332D]">Arrastre y suelte imágenes</p>
+                <p class="text-sm text-[#8C8177] mb-8 text-center px-4">
+                    Ancho mínimo 2000px. Se recomiendan archivos JPG o WebP.
+                </p>
+                <div class="relative">
+                    <label for="imagenes"
+                        class="cursor-pointer bg-[#1A2E22] text-[#FAF9F6] px-8 py-3 rounded-full font-semibold hover:bg-black transition-colors shadow-md">
+                        Seleccionar Archivos
+                    </label>
+                    <input id="imagenes" name="imagenes[]" type="file" class="hidden" multiple accept="image/*" />
+                </div>
+            </div>
+        </div>
+        @end
+
+
+        @component('components/form/section', {
+        title: 'Precio y privacidad',
+        description: 'Defina el valor por noche de la estancia.'
+        })
+        @!component('components/form/input', {
+        name: 'precio_por_noche',
+        type: 'number',
+        label: 'Precio por noche ($) (*)',
+        value: old('precio_por_noche') || cabana?.precio_por_noche || ''
+        })
+        @end
+
+
+        <div class="w-full">
+            <hr class="opacity-40 my-5 border-[#D1C7BD]">
+            <div class="flex justify-end pt-4">
+                <button type="submit"
+                    class="bg-[#2D332D] text-[#FAF9F6] px-10 py-4 rounded-md font-bold hover:bg-black transition-colors shadow-lg">
+                    {{ cabana ? 'Actualizar Santuario' : 'Publicar' }}
+                </button>
+            </div>
+        </div>
+
+    </form>
+</section>
+
+@end
