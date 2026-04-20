@@ -1,2 +1,13 @@
 @import "tailwindcss";
 @source "../views";
+
+@theme {
+  --color-primary: #2D4739;
+  --color-secondary: #8B5E3C;
+  --color-tertiary: #a67c52;
+  --color-neutral-bg: #F9F5F0;
+  --color-background: #F4F0EB;
+
+
+  --font-logo: "Times New Roman", serif;
+}
