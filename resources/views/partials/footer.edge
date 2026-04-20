@@ -1,0 +1,78 @@
+<footer class="bg-[#E6E2DD] text-gray-700 border-t border-neutral-200  px-6 md:px-12 py-16">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-sm leading-relaxed">
+
+
+            <div class="lg:col-span-2 space-y-3">
+                <h2 class="text-primary font-serif text-3xl font-medium tracking-tight">
+                    CumbreSoft
+                </h2>
+                <p class="text-gray-600 max-w-md">
+                    Curating stillness in the world's most evocative landscapes. Our cabins are designed for focused
+                    living and intentional rest.
+                </p>
+            </div>
+
+
+            <div class="space-y-4">
+                <h3 class="text-primary font-semibold uppercase tracking-wider text-xs">
+                    Discover
+                </h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="/" class="hover:text-secondary transition-colors">
+                            Sobre nosotros
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/" class="hover:text-secondary transition-colors">
+                            Ubicacion
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/" class="hover:text-secondary transition-colors">
+                            Conctacto
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" target="_blank" rel="noopener noreferrer"
+                            class="hover:text-secondary transition-colors inline-flex items-center gap-1">
+                            Instagram
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 opacity-60" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="space-y-4">
+                <h3 class="text-primary font-semibold uppercase tracking-wider text-xs">
+                    Legal
+                </h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{{-- route('legal.privacy') --}}" class="hover:text-secondary transition-colors">
+                            Politica de privacidad
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{-- route('legal.terms') --}}" class="hover:text-secondary transition-colors">
+                            Terminos del servicio
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+
+        <div class="mt-16 pt-8 border-t border-neutral-200 text-xs text-gray-500 font-medium">
+            &copy; {{ new Date().getFullYear() }} Todos los derechos reservados
+        </div>
+    </div>
+</footer>
