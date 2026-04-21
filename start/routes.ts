@@ -10,8 +10,12 @@
 import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
 import router from '@adonisjs/core/services/router'
+import RegisterController from '#controllers/auth/register_controller'
 
 router.on('/').render('pages/home').as('home')
+
+router.get('/register', [RegisterController, 'show'])
+router.post('/register', [RegisterController, 'store'])
 
 router
   .group(() => {

@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.string('nombre', 100).notNullable()
       table.string('apellido', 100).notNullable()
       table.string('email', 150).notNullable().unique()
+      table.string('dni',11).notNullable().unique()
       table.string('contrasena', 255).notNullable()
       table.integer('id_rol')
         .unsigned()
