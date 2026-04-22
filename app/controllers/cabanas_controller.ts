@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Cabana from '#models/cabana' // Ajusta el path según tu proyecto
-import { validadorCabana } from '#validators/cabana' // Luego definimos el validador
+import Cabana from '#models/cabana'
+import { validadorCabana } from '#validators/cabana'
 
 export default class CabanasController {
 

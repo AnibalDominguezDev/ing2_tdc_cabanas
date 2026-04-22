@@ -9,7 +9,7 @@
         Los campos con (*) son obligatorios.
     </p>
 
-    <form action="{{ route('guardar') }}" method="POST">
+    <form action="{{ route('guardar') }}" enctype='multipart/form-data' method="POST">
         {{ csrfField() }}
         @if(cabana)
         <input type="hidden" name="_method" value="PUT">

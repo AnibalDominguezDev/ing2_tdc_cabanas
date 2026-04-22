@@ -18,7 +18,7 @@ router.on('/').render('pages/home').as('home')
 router.get('/cabanas', [controllers.Cabanas, 'listar'])
 router.get('/cabana/:slug', [controllers.Cabanas, 'mostrar']).as('cabanas.mostrar')
 router.get('/cabanas/alta', [controllers.Cabanas, 'crear'])
-router.post('cabanas/guardar', [controllers.Cabanas, 'guardar']).as('guardar')
+router.post('cabanas/guardar', [controllers.Cabanas, 'agregarCabana']).as('guardar')
 
 router.get('/register', [RegisterController, 'show'])
 router.post('/register', [RegisterController, 'store'])
