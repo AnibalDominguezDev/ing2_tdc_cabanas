@@ -8,7 +8,7 @@ export default class CabanasController {
     return view.render('pages/cabanas/altaCabana')
   }
 
-  async guardar({ request, response, session }: HttpContext) {
+  async agregarCabana({ request, response, session }: HttpContext) {
     const datos = await request.validateUsing(validadorCabana)
 
     const cabana = await Cabana.create({
