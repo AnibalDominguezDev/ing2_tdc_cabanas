@@ -58,11 +58,11 @@
         })
         <div class="grid grid-cols-3 gap-4">
 
-            @each(servicio in ['Wi fi', 'Piscina', 'Estacionamiento', 'Parrilla', 'Desayuno', 'Aire Acondicionado'])
+            @each(servicio in servicios)
             @!component('components/form/checkbox', {
-            name: 'servicios',
-            value: servicio,
-            label: servicio
+            name: 'servicios[]',
+            value: servicio.id,
+            label: servicio.nombre
             })
             @endeach
         </div>
@@ -94,7 +94,7 @@
                         class="cursor-pointer bg-[#1A2E22] text-[#FAF9F6] px-8 py-3 rounded-full font-semibold hover:bg-black transition-colors shadow-md">
                         Seleccionar Archivos
                     </label>
-                    <input id="imagenes" name="imagenes[]" type="file" class="hidden" multiple accept="image/*" />
+                    <input id="imagenes" name="imagen" type="file" class="hidden" accept="image/*" />
                 </div>
             </div>
         </div>
@@ -108,7 +108,7 @@
         @!component('components/form/input', {
         name: 'precio_por_noche',
         type: 'number',
-        label: 'Precio por noche ($) (*)',
+        label: 'Precio por noche en ARS($) (*)',
         value: old('precio_por_noche') || cabana?.precio_por_noche || ''
         })
         @end
@@ -119,7 +119,7 @@
             <div class="flex justify-end pt-4">
                 <button type="submit"
                     class="bg-[#2D332D] text-[#FAF9F6] px-10 py-4 rounded-md font-bold hover:bg-black transition-colors shadow-lg">
-                    {{ cabana ? 'Actualizar Santuario' : 'Publicar' }}
+                    {{ cabana ? 'Actualizar' : 'Publicar' }}
                 </button>
             </div>
         </div>

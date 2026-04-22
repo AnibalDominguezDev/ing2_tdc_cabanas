@@ -42,8 +42,8 @@ export default class Cabana extends BaseModel {
 
     @manyToMany(() => Servicio, {
         pivotTable: 'cabana_servicios',
-        pivotForeignKey: 'cabana_id',
-        pivotRelatedForeignKey: 'servicio_id',
+        pivotForeignKey: 'id_cabana',
+        pivotRelatedForeignKey: 'id_servicios',
     })
     declare servicios: ManyToMany<typeof Servicio>
 

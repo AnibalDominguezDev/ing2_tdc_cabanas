@@ -15,7 +15,7 @@ import RegisterController from '#controllers/auth/register_controller'
 
 
 router.on('/').render('pages/home').as('home')
-router.get('/cabanas', [controllers.Cabanas, 'listar'])
+router.get('/cabanas', [controllers.Cabanas, 'listar']).as('cabanas')
 router.get('/cabana/:slug', [controllers.Cabanas, 'mostrar']).as('cabanas.mostrar')
 router.get('/cabanas/alta', [controllers.Cabanas, 'crear'])
 router.post('cabanas/guardar', [controllers.Cabanas, 'agregarCabana']).as('guardar')
