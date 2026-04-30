@@ -5,6 +5,8 @@ build
 tmp/*
 !tmp/.gitkeep
 
+storage/*
+
 # Secrets
 .env
 .env.local
