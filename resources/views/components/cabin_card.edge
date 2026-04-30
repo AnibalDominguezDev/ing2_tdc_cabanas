@@ -1,7 +1,8 @@
 <article class="group bg-neutral-bg overflow-hidden  border-neutral-200 hover:shadow-md transition-shadow duration-300">
 
     <div class="relative h-56 overflow-hidden">
-        <img src="{{ 'https://placehold.co/600x400?text=Cabaña' }}" alt="{{ cabin.nombre }}"
+        <img src="{{ cabin.imgUrl? await driveUrl(cabin.imgUrl) : 'https://placehold.co/600x400?text=Cabaña' }}"
+            alt="{{ cabin.nombre }}"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
         <div
             class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-semibold text-primary uppercase tracking-wider shadow-sm">
