@@ -2,17 +2,18 @@
 
 <section class="min-h-screen bg-[#FAF9F6] font-sans text-[#2D332D] py-10 px-20">
     <h1 class="text-6xl font-serif italic leading-tight mb-6">
-        Agregar una nueva <span class="not-italic">Cabaña</span>
+        {{ cabana? "Editar" : "Agregar una nueva"}} <span class="not-italic">Cabaña</span>
     </h1>
     <p class="text-lg text-[#5D635D] leading-relaxed mb-12">
-        Complete los siguientes campos una nueva cabaña a la colección. <br>
+        Complete los siguientes campos para agregar una nueva cabaña a la colección. <br>
         Los campos con (*) son obligatorios.
     </p>
 
-    <form action="{{ route('guardar') }}" enctype='multipart/form-data' method="POST">
+    <form action="{{ cabana? route('modificar') + '?_method=PUT': route('guardar') }}" enctype='multipart/form-data'
+        method="POST">
         {{ csrfField() }}
         @if(cabana)
-        <input type="hidden" name="_method" value="PUT">
+        <input type="hidden" name="id" value="{{cabana.id}}">
         @endif
 
 
@@ -57,14 +58,26 @@
         description: 'Seleccione las comodidades que ofrece esta cabaña.'
         })
         <div class="grid grid-cols-3 gap-4">
-
+            @if(cabana)
             @each(servicio in servicios)
             @!component('components/form/checkbox', {
             name: 'servicios[]',
             value: servicio.id,
-            label: servicio.nombre
+            label: servicio.nombre,
+            checked: serviciosActuales.includes(servicio.id)
             })
             @endeach
+            @else
+            @each(servicio in servicios)
+            @!component('components/form/checkbox', {
+            name: 'servicios[]',
+            value: servicio.id,
+            label: servicio.nombre,
+
+            })
+            @endeach
+            @end
+
         </div>
         @end
 
@@ -109,7 +122,7 @@
         name: 'precio_por_noche',
         type: 'number',
         label: 'Precio por noche en ARS($) (*)',
-        value: old('precio_por_noche') || cabana?.precio_por_noche || ''
+        value: old('precio_por_noche') || cabana?.precioPorNoche || ''
         })
         @end
 
