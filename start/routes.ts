@@ -16,10 +16,12 @@ import RegisterController from '#controllers/auth/register_controller'
 
 router.on('/').render('pages/home').as('home')
 router.get('/cabanas', [controllers.Cabanas, 'listar']).as('cabanas')
+//router.on('/cabanas/modificar').render('pages/home')
 router.get('/cabana/:slug', [controllers.Cabanas, 'mostrar']).as('cabanas.mostrar')
+router.get('/cabanas/editar/:slug', [controllers.Cabanas, 'editar'])
 router.get('/cabanas/alta', [controllers.Cabanas, 'crear'])
 router.post('cabanas/guardar', [controllers.Cabanas, 'agregarCabana']).as('guardar')
-
+router.put('cabanas/modificar', [controllers.Cabanas, 'actualizar']).as('modificar')
 router.get('/register', [RegisterController, 'show'])
 router.post('/register', [RegisterController, 'store'])
 
