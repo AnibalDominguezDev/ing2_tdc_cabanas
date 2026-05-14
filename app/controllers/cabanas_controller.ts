@@ -121,9 +121,13 @@ export default class CabanasController {
       session.flash('error', 'Error: Ocurrio un error al actualizar la cabaña.')
       return response.redirect().back()
     }
+  }
 
+  async admin({ view }: HttpContext) {
 
+    const cabanas = await Cabana.all();
 
+    return view.render('pages/admin/gestionCabanas', { cabanas })
   }
 
   async listar({ view }: HttpContext) {

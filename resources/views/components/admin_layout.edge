@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+        Cumbresoft
+    </title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('dumper')
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="flex h-screen bg-white font-sans antialiased text-gray-900">
+    @include('partials/admin_sidebar')
+    <main class="flex-1 px-4 flex flex-col overflow-hidden">
+        <div class="flex-1 overflow-y-auto p-8">
+            @include('partials/flash_alerts')
+            {{{ await $slots.main() }}}
+        </div>
+    </main>
+    @!modal()
+</body>
+
+</html>

@@ -1,0 +1,184 @@
+@adminLayout()
+<header class="max-w-7xl space-y-8">
+
+    <!-- Sección de Cabecera (Títulos y Acciones) -->
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+
+        <!-- Títulos y Descripción -->
+        <div class="max-w-2xl">
+
+            <h2 class="mt-2 text-5xl font-serif text-[#1B3B32] leading-tight">
+                Inventario de Cabañas y Gestion
+            </h2>
+            <p class="mt-4 text-gray-500 text-sm md:text-base leading-relaxed">
+                Curate and monitor your collection of high-end wilderness retreats. Maintain the hearth, manage the
+                availability.
+            </p>
+        </div>
+
+
+
+    </div>
+
+    <!-- Grid de Tarjetas de Métricas -->
+
+    <div class="flex flex-col gap-2 shrink-0">
+        <div class="flex items-center gap-3">
+            <!-- Botón Filter -->
+            <button
+                class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-800 bg-[#F0EEEB] rounded-md hover:bg-gray-200 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                    </path>
+                </svg>
+                Filter
+            </button>
+
+            <!-- Botón Add New -->
+            <a href="{{urlFor('nuevaCabana')}}"
+                class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-[#1B3B32] rounded-md hover:bg-[#122822] transition-colors shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Nueva cabaña
+            </a>
+        </div>
+
+    </div>
+
+
+</header>
+
+<div class="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden mt-5">
+
+    <!-- Cabecera de la Tabla -->
+    <div class="px-6 py-5 flex items-center justify-between bg-white">
+        <h3 class="text-xl font-serif text-[#1B3B32]">Cabañas en el sistema</h3>
+
+        <div class="flex items-center gap-4 text-sm text-gray-500">
+            <span>Showing 1–10 of 24</span>
+            <!-- Controles de Paginación -->
+            <div class="flex items-center gap-2">
+                <button class="p-1 text-gray-400 hover:text-gray-800 transition-colors" disabled>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                </button>
+                <button class="p-1 text-gray-400 hover:text-gray-800 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de la Tabla -->
+    <div class="overflow-x-auto m-4">
+        <table class="w-full text-left border-collapse">
+            <!-- Títulos de Columnas -->
+            <thead class="bg-[#FCFBF9] border-y border-gray-100">
+                <tr>
+                    <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase">Cabaña</th>
+                    <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase">Location</th>
+                    <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase ">Estado</th>
+                    <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase">Precio / Noche</th>
+                    <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase ">Acciones
+                    </th>
+                </tr>
+            </thead>
+
+            <!-- Filas de Datos -->
+            <tbody class="divide-y divide-gray-100 bg-white">
+
+                {{-- Aquí iteramos sobre los datos enviados desde tu controlador de AdonisJS --}}
+                @each(cabin in cabanas)
+                <tr class="hover:bg-gray-50 transition-colors group">
+
+
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            <img src="{{ cabin.imgUrl? await driveUrl(cabin.imgUrl) : 'https://placehold.co/100x100?text=No-img' }}"
+                                alt="{{ cabin.nombre }}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+                            <div>
+                                <p class="text-sm font-bold text-[#1B3B32]">{{ cabin.nombre }}</p>
+
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Ubicación -->
+                    <td class="px-6 py-4">
+                        <p class="text-sm text-gray-600">{{ cabin.location }}</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">{{ cabin.coordinates }}</p>
+                    </td>
+
+                    <!-- Estado (Badge dinámico) -->
+                    <td class="px-6 py-4">
+                        @if(cabin.idEstado === 1)
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#2B453D] uppercase bg-[#E9F0EC] border border-[#D5E5DD] rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#2B453D]"></span>
+                            Available
+                        </span>
+                        @elseif(cabin.status === 'Booked')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#8A352F] uppercase bg-[#FCEDEB] border border-[#F2D6D3] rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#8A352F]"></span>
+                            Booked
+                        </span>
+                        @elseif(cabin.status === 'Maintenance')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#7D5537] uppercase bg-[#F6EBE1] border border-[#EADDCE] rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#7D5537]"></span>
+                            Maintenance
+                        </span>
+                        @endif
+                    </td>
+
+                    <!-- Precio -->
+                    <td class="px-6 py-4">
+                        <span class="text-sm font-semibold text-gray-700">${{ cabin.precioPorNoche }}</span>
+                    </td>
+
+                    <!-- Acciones -->
+                    <td class="px-6 py-4 ">
+                        <!-- Botón de edición que aparece al hacer hover -->
+                        <div class="flex items-center gap-1">
+
+
+                            <a href="{{ urlFor('cabanas.editar', { slug: cabin.slug }) }}"
+                                class="p-2 text-gray-400 hover:text-[#1B3B32] cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                    </path>
+                                </svg>
+                            </a>
+
+                            <!-- Botón Eliminar (Soft Delete) -->
+                            <button x-data x-on:click="$dispatch('open-confirm-modal', { 
+    title: 'Archivar Cabaña',
+    message: `¿Estás seguro de que deseas archivar <b>{{ cabin.nombre }}</b>? Al ser una eliminación lógica, la propiedad dejará de estar visible pero podrá ser restaurada desde la papelera más adelante.`,
+    actionUrl: `?_method=DELETE`,
+    confirmText: 'Sí, archivar cabaña'
+  })" class="p-2 text-gray-400 hover:text-orange-600 transition-colors cursor-pointer" title="Archivar cabaña">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+
+                </tr>
+                @endeach
+
+            </tbody>
+        </table>
+    </div>
+</div>
+@end
