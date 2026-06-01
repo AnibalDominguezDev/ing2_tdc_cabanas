@@ -17,5 +17,6 @@ export const validadorCabana = vine.create({
     capacidad: vine.number().min(1).max(50),
     habitaciones: vine.number().min(1).max(10),
     precio_por_noche: vine.number().min(0),
+    imagen: vine.file({ size: '10mb', extnames: ['png', 'jpg', 'webp'] }).optional()
 
 })
