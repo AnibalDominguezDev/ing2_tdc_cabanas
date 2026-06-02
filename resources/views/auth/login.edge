@@ -1,0 +1,82 @@
+@layout()
+
+<div class="relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
+
+  <div
+    class="w-full max-w-md rounded-[28px] border border-[#8B5E3C]/10 bg-[#F9F5F0]/95 shadow-[0_20px_60px_rgba(45,71,57,0.18)] backdrop-blur-md">
+
+    <div class="px-8 pt-8 pb-6 sm:px-10">
+      <div class="mb-8 text-center">
+
+        <h1 class="text-3xl font-bold tracking-tight text-[#2D4739] sm:text-4xl">
+          Iniciar sesión
+        </h1>
+
+        <p class="mt-3 text-sm text-[#2D4739]/75">
+          Ingresa tus datos para acceder
+        </p>
+
+        <p class="mt-4 text-sm text-[#2D4739]/80">
+          ¿No tienes una cuenta?
+          <a href="/register" class="font-semibold text-[#8B5E3C] transition hover:text-[#2D4739] hover:underline">
+            Registrate
+          </a>
+        </p>
+      </div>
+
+      @if(flashMessages.has('success'))
+      <div class="mb-5 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 shadow-sm">
+        {{ flashMessages.get('success') }}
+      </div>
+      @endif
+
+      @if(flashMessages.has('errors'))
+      <div class="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
+        <ul class="list-disc space-y-1 pl-5">
+          @each(error in flashMessages.get('errors'))
+          <li>{{ error }}</li>
+          @end
+        </ul>
+      </div>
+      @endif
+
+      <form action="/login" method="POST" class="space-y-5" novalidate>
+        {{ csrfField() }}
+
+        <div>
+          <label for="email" class="mb-2 block text-sm font-semibold text-[#2D4739]">
+            Correo electrónico
+          </label>
+          <input
+            id="email"
+            type="text"
+            name="email"
+            value="{{ old('email', '') }}"
+            placeholder="ejemplo@correo.com"
+            class="w-full rounded-2xl border border-[#8B5E3C]/15 bg-white/80 px-4 py-3 text-sm text-[#2D4739] outline-none transition placeholder:text-[#2D4739]/35 focus:border-[#8B5E3C] focus:ring-4 focus:ring-[#8B5E3C]/10">
+        </div>
+
+        <div>
+          <label for="contrasena" class="mb-2 block text-sm font-semibold text-[#2D4739]">
+            Contraseña
+          </label>
+          <input
+            id="contrasena"
+            type="password"
+            name="contrasena"
+            placeholder="Ingresa tu contraseña"
+            class="w-full rounded-2xl border border-[#8B5E3C]/15 bg-white/80 px-4 py-3 text-sm text-[#2D4739] outline-none transition placeholder:text-[#2D4739]/35 focus:border-[#8B5E3C] focus:ring-4 focus:ring-[#8B5E3C]/10">
+        </div>
+
+        <div class="pt-2">
+          <button type="submit"
+            class="w-full rounded-2xl bg-[#2D4739] px-4 py-3 text-sm font-semibold text-[#F9F5F0] shadow-lg shadow-[#2D4739]/20 transition duration-200 hover:-translate-y-0.5 hover:bg-[#24392d] focus:outline-none focus:ring-4 focus:ring-[#2D4739]/20">
+            Iniciar sesión
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@end

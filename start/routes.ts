@@ -11,6 +11,7 @@ import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
 import router from '@adonisjs/core/services/router'
 import RegisterController from '#controllers/auth/register_controller'
+import LoginController from '#controllers/auth/login_controller'
 
 const mockCabins = [
   {
@@ -68,13 +69,8 @@ router
     router.get('signup', [controllers.NewAccount, 'create'])
     router.post('signup', [controllers.NewAccount, 'store'])
 
-    router.get('login', [controllers.Session, 'create'])
-    router.post('login', [controllers.Session, 'store'])
+    router.get('/login', [LoginController, 'show'])
+    router.post('/login', [LoginController, 'store'])
+    router.post('/logout', [LoginController, 'logout'])
   })
   .use(middleware.guest())
-
-router
-  .group(() => {
-    router.post('logout', [controllers.Session, 'destroy'])
-  })
-  .use(middleware.auth())

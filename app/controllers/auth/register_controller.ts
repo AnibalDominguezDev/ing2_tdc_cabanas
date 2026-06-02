@@ -18,8 +18,8 @@ export default class RegisterController {
         contrasena: datos.contrasena,
         idRol: 1,
       })
-      session.flash('success', 'Usuario registrado correctamente')
-      return response.redirect('/register')
+      session.flash('success', 'Usuario creado con éxito. Listo para iniciar sesión')
+      return response.redirect('/login')
     } catch (error: unknown) {
       if (
         typeof error === 'object' &&
@@ -36,8 +36,8 @@ export default class RegisterController {
         session.flash('errors', ['Error inesperado'])
       }
 
-      session.flashAll()
-      return response.redirect().back()
+      session.flash('success', 'Usuario creado con éxito. Listo para iniciar sesión')
+      return response.redirect('/login')
     }
   }
 }
