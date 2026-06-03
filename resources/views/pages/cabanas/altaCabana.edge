@@ -87,8 +87,9 @@
         description: 'Suba fotografías de alta calidad para cautivar a los huéspedes.'
         })
         <div
-            class="flex flex-col items-center justify-center w-full h-80 border-2 border-dashed border-[#D1C7BD] rounded-md bg-[#F4F1EA] hover:bg-[#EBE7DF] transition-colors duration-300">
-            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+            class="relative flex flex-col items-center justify-center w-full h-80 border-2 border-dashed border-[#D1C7BD] rounded-md bg-[#F4F1EA] hover:bg-[#EBE7DF] transition-colors duration-300 overflow-hidden">
+
+            <div id="upload-prompt" class="flex flex-col items-center justify-center pt-5 pb-6 w-full h-full">
                 <svg class="w-16 h-16 mb-6 text-[#A3978D]" fill="currentColor" viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -107,10 +108,43 @@
                         class="cursor-pointer bg-[#1A2E22] text-[#FAF9F6] px-8 py-3 rounded-full font-semibold hover:bg-black transition-colors shadow-md">
                         Seleccionar Archivos
                     </label>
-                    <input id="imagenes" name="imagen" type="file" class="hidden" accept="image/*" />
+                    <input id="imagenes" name="imagen" type="file" class="hidden" accept="image/*"
+                        onchange="previewImage(event)" />
+                </div>
+            </div>
+
+            <div id="image-preview-container" class="absolute inset-0 hidden w-full h-full group">
+                <img id="preview-img" class="w-full h-full object-contain rounded-md" src="" alt="Vista previa">
+
+                <div
+                    class="absolute inset-0 bg-[#f4f1ea] bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
+                    <label for="imagenes"
+                        class="cursor-pointer bg-[#1A2E22] text-[#FAF9F6] px-6 py-2 rounded-full font-semibold hover:bg-black transition-colors shadow-md text-sm">
+                        Cambiar Imagen
+                    </label>
                 </div>
             </div>
         </div>
+
+        <script>
+            function previewImage(event) {
+                const input = event.target;
+                const file = input.files[0];
+
+                if (file) {
+                    const promptContainer = document.getElementById('upload-prompt');
+                    const previewContainer = document.getElementById('image-preview-container');
+                    const previewImage = document.getElementById('preview-img');
+
+                    // Genera una URL temporal para mostrar la imagen sin necesidad de subirla al servidor aún
+                    previewImage.src = URL.createObjectURL(file);
+
+                    // Oculta las instrucciones y muestra la imagen
+                    promptContainer.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                }
+            }
+        </script>
         @end
 
 
