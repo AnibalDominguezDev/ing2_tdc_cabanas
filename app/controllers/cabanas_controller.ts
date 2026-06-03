@@ -1,4 +1,4 @@
-import { Redirect, type HttpContext } from '@adonisjs/core/http'
+import { type HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { validadorCabana } from '#validators/cabana'
 import { CabanaService } from '#services/cabana_service'
