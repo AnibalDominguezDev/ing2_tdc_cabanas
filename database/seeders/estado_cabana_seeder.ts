@@ -6,6 +6,7 @@ export default class extends BaseSeeder {
     await EstadoCabana.createMany([
       { descEstado: 'Activo' },
       { descEstado: 'Mantenimiento' },
+      { descEstado: 'Ocupado' },
       { descEstado: 'Eliminado' }
     ])
   }

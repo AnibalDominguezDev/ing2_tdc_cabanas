@@ -27,8 +27,8 @@ router.post('/register', [RegisterController, 'store'])
 
 router
   .group(() => {
-    router.get('signup', [controllers.NewAccount, 'create'])
-    router.post('signup', [controllers.NewAccount, 'store'])
+    // router.get('signup', [controllers.NewAccount, 'create'])
+    // router.post('signup', [controllers.NewAccount, 'store'])
 
     router.get('/login', [LoginController, 'show'])
     router.post('/login', [LoginController, 'store'])

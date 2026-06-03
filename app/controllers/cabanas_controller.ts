@@ -102,8 +102,10 @@ export default class CabanasController {
     return view.render('pages/cabanas/catalogo', { cabanas })
   }
 
-  async mostrar({ params }: HttpContext) {
+  async mostrar({ view, params }: HttpContext) {
 
-    return await this.cabanaService.obtenerPorSlug(params.slug)
+    const cabana = await this.cabanaService.obtenerPorSlug(params.slug)
+
+    return view.render('pages/cabanas/verCabana', { cabana })
   }
 }

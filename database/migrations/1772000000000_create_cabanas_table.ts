@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id_cabana')
       table.string('nombre', 254).notNullable().unique()
-      table.string('descripcion', 254).notNullable()
+      table.string('descripcion', 800).notNullable()
       table.float('precio_por_noche').notNullable()
       table.integer('capacidad').defaultTo(1).notNullable()
       table.integer('habitaciones').defaultTo(1).notNullable()
