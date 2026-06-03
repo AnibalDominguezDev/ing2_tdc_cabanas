@@ -1,150 +1,109 @@
-import type { HttpContext } from '@adonisjs/core/http'
-import Cabana from '#models/cabana'
-import Servicio from '#models/servicio'
+import { Redirect, type HttpContext } from '@adonisjs/core/http'
+import { inject } from '@adonisjs/core'
 import { validadorCabana } from '#validators/cabana'
-import stringHelpers from '@adonisjs/core/helpers/string'
-
+import { CabanaService } from '#services/cabana_service'
+@inject()
 export default class CabanasController {
 
+  // Inyección de la clase de servicio
+  constructor(private cabanaService: CabanaService) { }
+
   async crear({ view }: HttpContext) {
-
-    const servicios = await Servicio.all()
-
+    const servicios = await this.cabanaService.obtenerServicios()
     return view.render('pages/cabanas/altaCabana', { servicios })
   }
 
   async agregarCabana({ request, response, session }: HttpContext) {
-
     const datos = await request.validateUsing(validadorCabana)
-
     const servicios = request.input('servicios[]', [])
-
     const img = request.file('imagen', {
       size: '20mb',
       extnames: ['jpg', 'png', 'jpeg', 'webp']
     })
 
     try {
-      const cabana = await Cabana.create({
-        nombre: datos.nombre,
-        descripcion: datos.descripcion,
-        capacidad: datos.capacidad,
-        habitaciones: datos.habitaciones,
-        precioPorNoche: datos.precio_por_noche,
-        idEstado: 1,
-      })
-
-
-
-      if (img) {
-        await img.moveToDisk(`cabanas_img/${datos.nombre}.${img.extname}`)
-        cabana.imgUrl = `cabanas_img/${datos.nombre}.${img.extname}`
-        await cabana.save()
-      }
-
-      if (servicios.length > 0) {
-        await cabana.related('servicios').attach(servicios)
-      }
+      // Delegamos la lógica compleja al servicio
+      await this.cabanaService.crear(datos, servicios, img)
 
       session.flash('success', 'Cabaña guardada correctamente')
       return response.redirect().toRoute('cabanas')
 
     } catch (error) {
-
       session.flash(request.except(['imagen', '_csrf']))
-      session.flash('error', 'Error: Ocurrio un error al insertar la cabaña.')
+      session.flash('error', 'Error: Ocurrió un error al insertar la cabaña.')
+      return response.redirect().back()
     }
-
-    return response.redirect().back()
-
-
   }
 
   async editar({ params, view }: HttpContext) {
 
-    const cabana = await Cabana.query().where('slug', params.slug).preload('servicios').firstOrFail()
+    const cabana = await this.cabanaService.obtenerPorSlug(params.slug)
+    const servicios = await this.cabanaService.obtenerServicios()
 
-    const servicios = await Servicio.all();
-
+    // Mapeo para los checkboxes en la vista
     const serviciosActuales = cabana.servicios.map((servicio) => servicio.id)
 
     return view.render('pages/cabanas/altaCabana', { cabana, servicios, serviciosActuales })
   }
 
   async actualizar({ response, request, session }: HttpContext) {
+    const id = request.input('id')
+    const img = request.file('imagen', {
+      size: '20mb',
+      extnames: ['jpg', 'png', 'jpeg', 'webp']
+    })
 
     try {
-
-      const cabana = await Cabana.findOrFail(request.input('id'))
-
-      const img = request.file('imagen', {
-        size: '20mb',
-        extnames: ['jpg', 'png', 'jpeg', 'webp']
-      })
-
+      // Es importante validar antes de enviar datos al servicio
       const nuevosDatos = await request.validateUsing(validadorCabana, {
-        meta: {
-          cabanaId: request.input('id')
-        }
+        meta: { cabanaId: id }
       })
-
       const serviciosInput = request.input('servicios[]', [])
 
-      const servicios = await Servicio.all();
+      // Delegamos la actualización
+      await this.cabanaService.actualizar(id, nuevosDatos, serviciosInput, img)
 
-      await cabana.merge({
-        //nombre: nuevosDatos.nombre,
-        descripcion: nuevosDatos.descripcion,
-        capacidad: nuevosDatos.capacidad,
-        habitaciones: nuevosDatos.habitaciones,
-        precioPorNoche: nuevosDatos.precio_por_noche,
-
-      }).save()
-
-      if (servicios.length > 0) {
-        await cabana.related('servicios').sync(serviciosInput)
-      }
-
-      if (img) {
-
-        const path = `cabanas_img/${stringHelpers.uuid()}.${img.extname}`
-
-        await img.moveToDisk(path)
-        cabana.imgUrl = path
-        await cabana.save()
-      }
-
-      return response.json(nuevosDatos)
+      session.flash('success', 'Cabaña editada correctamente')
+      return response.redirect().toRoute('gestion')
 
     } catch (error) {
       session.flash(request.except(['imagen', '_csrf']))
-      session.flash('error', 'Error: Ocurrio un error al actualizar la cabaña.')
+      session.flash('error', 'Error: Ocurrió un error al actualizar la cabaña.')
       return response.redirect().back()
     }
   }
 
+  async eliminarCabana({ session, response, params }: HttpContext) {
+
+
+    try {
+
+      const id = params.id
+
+      await this.cabanaService.eliminar(id)
+      session.flash('success', 'Cabaña eliminada correctamente')
+      return response.redirect().back()
+
+    } catch (error: any) {
+      session.flash('error', error.message)
+      return response.redirect().back()
+    }
+
+
+  }
+
   async admin({ view }: HttpContext) {
-
-    const cabanas = await Cabana.all();
-
+    const cabanas = await this.cabanaService.obtenerTodas()
     return view.render('pages/admin/gestionCabanas', { cabanas })
   }
 
   async listar({ view }: HttpContext) {
-
-    const cabanas = await Cabana.query()
-      .where('id_estado', 1)
-      .preload('servicios')
-
+    const cabanas = await this.cabanaService.obtenerActivas()
     return view.render('pages/cabanas/catalogo', { cabanas })
   }
 
-  async mostrar({ params, view }: HttpContext) {
+  async mostrar({ params }: HttpContext) {
 
-    const cabana = Cabana.findBy('slug', params.slug)
-
-    return cabana
+    return await this.cabanaService.obtenerPorSlug(params.slug)
   }
-
-
 }
