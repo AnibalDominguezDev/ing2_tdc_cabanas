@@ -28,6 +28,9 @@ VineDate.transform((value) => DateTime.fromJSDate(value))
 vine.messagesProvider = new SimpleMessagesProvider({
   required: 'El campo {{ field }} es obligatorio',
   string: 'El campo {{ field }} debe ser texto',
+'database.unique': 'El valor del campo {{ field }} ya está en uso',
+'email.database.unique': 'El correo ya se encuentra registrado',
+'dni.database.unique': 'El DNI ya está asignado a un usuario existente',
   email: 'El campo {{ field }} debe ser un correo válido',
 
   minLength: 'El campo {{ field }} debe tener al menos {{ min }} caracteres',
@@ -35,6 +38,11 @@ vine.messagesProvider = new SimpleMessagesProvider({
 
   'nombre.minLength': 'El nombre debe tener al menos {{ min }} caracteres',
   'apellido.minLength': 'El apellido debe tener al menos {{ min }} caracteres',
-  'dni.minLength': 'El DNI debe tener al menos {{ min }} caracteres',
-  'contrasena.minLength': 'La contraseña debe tener al menos {{ min }} caracteres',
+
+  'dni.regex': 'El DNI debe contener entre 7 y 11 dígitos numéricos',
+
+ 
+
+  'contrasena.minLength':
+    'La contraseña debe tener al menos {{ min }} caracteres',
 })
