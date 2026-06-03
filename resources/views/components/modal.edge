@@ -2,6 +2,7 @@
     isOpen: false, 
     title: '', 
     message: '', 
+    cabanaId: '',
     actionUrl: '',
     confirmText: 'Confirmar',
     method: 'POST'
@@ -50,7 +51,7 @@
                 <!-- Formulario Dinámico -->
                 <form :action="actionUrl" method="POST" class="w-full sm:w-auto">
                     {{ csrfField() }}
-                    <button x-on:click="isOpen = false" type="button"
+                    <button x-on:click="isOpen = false" type="submit"
                         class="inline-flex justify-center w-full px-4 py-2.5 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-lg hover:bg-orange-700 transition-colors shadow-sm sm:w-auto cursor-pointer">
                         Confirmar
                     </button>

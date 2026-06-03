@@ -4,6 +4,7 @@ import type { ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
 import Servicio from '#models/servicio'
 import EstadoCabana from '#models/estado_cabana'
 import string from '@adonisjs/core/helpers/string'
+import { EstadoCabanaFactory } from '#services/CabanaEstados/EstadoFactory'
 
 export default class Cabana extends BaseModel {
     public static table = 'cabana'
@@ -63,5 +64,14 @@ export default class Cabana extends BaseModel {
                 replacement: '-'
             })
         }
+    }
+
+    get estadoObj() {
+        return EstadoCabanaFactory.fabricar(this.idEstado)
+    }
+
+
+    get nombreEstado() {
+        return this.estadoObj.nombre
     }
 }

@@ -117,23 +117,24 @@
 
                     <!-- Estado (Badge dinámico) -->
                     <td class="px-6 py-4">
-                        @if(cabin.idEstado === 1)
+                        {{cabin.nombreEstado}}
+                        @if(cabin.nombreEstado === 'Disponible')
                         <span
                             class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#2B453D] uppercase bg-[#E9F0EC] border border-[#D5E5DD] rounded-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-[#2B453D]"></span>
-                            Available
+                            Disponible
                         </span>
-                        @elseif(cabin.status === 'Booked')
+                        @elseif(cabin.nombreEstado === 'Eliminado')
                         <span
                             class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#8A352F] uppercase bg-[#FCEDEB] border border-[#F2D6D3] rounded-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-[#8A352F]"></span>
-                            Booked
+                            Eliminado
                         </span>
-                        @elseif(cabin.status === 'Maintenance')
+                        @elseif(cabin.nombreEstado === 'Mantenimiento')
                         <span
                             class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#7D5537] uppercase bg-[#F6EBE1] border border-[#EADDCE] rounded-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-[#7D5537]"></span>
-                            Maintenance
+                            Mantenimiento
                         </span>
                         @endif
                     </td>
@@ -162,7 +163,8 @@
                             <button x-data x-on:click="$dispatch('open-confirm-modal', { 
     title: 'Archivar Cabaña',
     message: `¿Estás seguro de que deseas archivar <b>{{ cabin.nombre }}</b>? Al ser una eliminación lógica, la propiedad dejará de estar visible pero podrá ser restaurada desde la papelera más adelante.`,
-    actionUrl: `?_method=DELETE`,
+    actionUrl: `{{ route('cabanas.eliminar', { id: cabin.id }) }}?_method=DELETE`,
+    cabanaId: {{cabin.id}},
     confirmText: 'Sí, archivar cabaña'
   })" class="p-2 text-gray-400 hover:text-orange-600 transition-colors cursor-pointer" title="Archivar cabaña">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
