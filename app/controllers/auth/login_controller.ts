@@ -38,6 +38,10 @@ export default class LoginController {
           usuario.idRol === 1 ? 'Cliente' : 'Administrador'
         )
 
+      if (usuario.idRol === 2) {
+        return response.redirect().toRoute('gestion')
+      }
+
       return response.redirect('/')
     } catch (error: unknown) {
       if (

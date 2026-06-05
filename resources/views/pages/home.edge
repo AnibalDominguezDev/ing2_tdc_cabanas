@@ -25,6 +25,13 @@
     Ver cabañas
   </a>
 
+  @if(session.get('usuario_rol') === 2)
+    <a href="/gestion"
+      class="rounded-2xl border border-[#8B5E3C]/30 bg-white/70 px-6 py-3 text-center text-sm font-semibold text-[#8B5E3C] transition hover:bg-[#8B5E3C]/10">
+      Ir a gestión
+    </a>
+  @endif
+
   @if(!session.get('usuario_id'))
     <a href="/login"
       class="rounded-2xl border border-[#8B5E3C]/30 px-6 py-3 text-center text-sm font-semibold text-[#8B5E3C] transition hover:bg-[#8B5E3C]/10">

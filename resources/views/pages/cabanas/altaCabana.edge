@@ -61,7 +61,7 @@
             @if(cabana)
             @each(servicio in servicios)
             @!component('components/form/checkbox', {
-            name: 'servicios[]',
+            name: 'servicios',
             value: servicio.id,
             label: servicio.nombre,
             checked: serviciosActuales.includes(servicio.id)
@@ -70,7 +70,7 @@
             @else
             @each(servicio in servicios)
             @!component('components/form/checkbox', {
-            name: 'servicios[]',
+            name: 'servicios',
             value: servicio.id,
             label: servicio.nombre,
 
