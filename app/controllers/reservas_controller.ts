@@ -10,7 +10,12 @@ export default class ReservasController {
 
     private cabana = new CabanaService()
 
-    public async crear({ params, view }: HttpContext) {
+    public async crear({ params, view, session, response }: HttpContext) {
+
+        if (!session.get('usuario_id')) {
+            session.flash('error', 'Inicie sesion para realizar una reserva')
+            return response.redirect('/login')
+        }
 
         const cabana = await this.cabana.obtenerPorSlug(params.slug)
 
@@ -21,6 +26,11 @@ export default class ReservasController {
     public async store({ session, params, request, response }: HttpContext) {
 
         try {
+
+            if (!session.get('usuario_id')) {
+                session.flash('error', 'Inicie sesion para realizar una reserva')
+                return response.redirect('/login')
+            }
 
             const cabana = await this.cabana.obtenerPorSlug(params.slug)
 
