@@ -11,6 +11,56 @@ export class ReservaService {
 
   constructor(private cabanaService: CabanaService) { }
 
+  private formatearFecha(value: string | Date) {
+    if (value instanceof Date) {
+      const year = value.getFullYear()
+      const month = String(value.getMonth() + 1).padStart(2, '0')
+      const day = String(value.getDate()).padStart(2, '0')
+
+      return `${year}-${month}-${day}`
+    }
+
+    return value.slice(0, 10)
+  }
+
+  private crearFecha(value: unknown) {
+    if (DateTime.isDateTime(value)) {
+      return value
+    }
+
+    if (value instanceof Date) {
+      return DateTime.fromJSDate(value)
+    }
+
+    return DateTime.fromISO(String(value).slice(0, 10))
+  }
+
+  async obtenerRangosOcupados(cabanaId: number) {
+    const reservas = await db
+      .from('reservas')
+      .select('fecha_inicio as fechaInicio', 'fecha_fin as fechaFin')
+      .where('id_cabana', cabanaId)
+      .whereIn('id_estado_reserva', [1, 2])
+      .orderBy('fecha_inicio', 'asc')
+
+    return reservas.map((reserva) => ({
+      inicio: this.formatearFecha(reserva.fechaInicio),
+      fin: this.formatearFecha(reserva.fechaFin),
+    }))
+  }
+
+  async estaDisponible(cabanaId: number, checkin: string, checkout: string) {
+    const reservaConflictiva = await db
+      .from('reservas')
+      .where('id_cabana', cabanaId)
+      .whereIn('id_estado_reserva', [1, 2])
+      .where('fecha_inicio', '<', checkout)
+      .where('fecha_fin', '>', checkin)
+      .first()
+
+    return !reservaConflictiva
+  }
+
   async NuevaReserva(datos: any) {
     // Iniciamos la transacción para asegurar la integridad de los datos
     const trx = await db.transaction()
@@ -19,29 +69,17 @@ export class ReservaService {
       // 1. Obtener la Cabaña y validar el precio base
       const cabana = await Cabana.findOrFail(datos.cabanaId, { client: trx })
 
-      const fechaIn = new Date(datos.checkin)
-      const fechaOut = new Date(datos.checkout)
-
       // 2. Calcular la cantidad de noches
-      const inicio = DateTime.fromJSDate(fechaIn)
-      const fin = DateTime.fromJSDate(fechaOut)
+      const inicio = this.crearFecha(datos.checkin)
+      const fin = this.crearFecha(datos.checkout)
 
       const inicioSQL = inicio.toSQLDate()!
       const finSQL = fin.toSQLDate()!
 
-      const reservaConflictiva = await Reserva.query()
-        .where('cabanaId', cabana.id)
-        // Opcional: Si tienes un estado "Cancelada" (ej. ID 4), descomenta la siguiente línea:
-        // .where('idEstadoReserva', '!=', 4) 
-        .where((query) => {
-          query
-            .where('fechaInicio', '<', finSQL)
-            .andWhere('fechaFin', '>', inicioSQL)
-        })
-        .first() // Solo necesitamos saber si existe al menos UNA que choque
+      const disponible = await this.estaDisponible(cabana.id, inicioSQL, finSQL)
 
-      if (reservaConflictiva) {
-        throw new Error('La cabaña no está disponible en las fechas seleccionadas.')
+      if (!disponible) {
+        throw new Error('La cabana no esta disponible en las fechas seleccionadas.')
       }
 
       const noches = Math.round(fin.diff(inicio).as('days'))

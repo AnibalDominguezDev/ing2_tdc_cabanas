@@ -46,6 +46,25 @@
   align-items: center;
 }
 
+.flatpickr-day.reserva-dia-disponible:not(.flatpickr-disabled) {
+  background: #dcfce7;
+  border-color: #bbf7d0;
+  color: #14532d;
+}
+
+.flatpickr-day.reserva-dia-disponible:not(.flatpickr-disabled):hover {
+  background: #bbf7d0;
+  border-color: #86efac;
+}
+
+.flatpickr-day.reserva-dia-ocupado,
+.flatpickr-day.reserva-dia-ocupado.flatpickr-disabled {
+  background: #14532d;
+  border-color: #14532d;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
 @keyframes scale-up {
   from {
     transform: scale(0.7);

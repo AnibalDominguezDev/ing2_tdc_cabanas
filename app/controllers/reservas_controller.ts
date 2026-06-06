@@ -18,9 +18,10 @@ export default class ReservasController {
         }
 
         const cabana = await this.cabana.obtenerPorSlug(params.slug)
+        const rangosOcupados = await this.reservaService.obtenerRangosOcupados(cabana.id)
 
 
-        return view.render('pages/reservas/realizarReserva', { cabana })
+        return view.render('pages/reservas/realizarReserva', { cabana, rangosOcupados })
     }
 
     public async store({ session, params, request, response }: HttpContext) {
@@ -34,36 +35,35 @@ export default class ReservasController {
 
             const cabana = await this.cabana.obtenerPorSlug(params.slug)
 
-            const datosRecibidos = request.all()
-
-            datosRecibidos.cabanaId = cabana.id;
-            datosRecibidos.usuairioId = session.get('usuario_id')
-
             const datosValidados = await request.validateUsing(ReservaValidator, {
                 messagesProvider: mensajesReserva
             })
 
-            const reserva = await this.reservaService.NuevaReserva(datosValidados)
+            const datosReserva = {
+                ...datosValidados,
+                cabanaId: cabana.id,
+                usuarioId: session.get('usuario_id'),
+            }
+
+            await this.reservaService.NuevaReserva(datosReserva)
 
             // console.log('--- NUEVA RESERVA RECIBIDA ---')
             // console.log('================Datos recibidos===================')
             // console.log({ datosRecibidos })
             console.log('================Datos validos===================')
-            console.dir(datosValidados, { depth: null })
+            console.dir(datosReserva, { depth: null })
 
-            return response.json({
-                status: 'Éxito',
-                mensaje: 'Formulario recibido correctamente',
-                data: reserva
-            })
+            session.flash('success', 'Reserva realizada correctamente')
+            return response.redirect().toRoute('home')
 
         } catch (error: any) {
 
 
             console.log(error)
 
-
-            return response.json({ error })
+            session.flash('error', typeof error === 'string' ? error : error.message || 'No se pudo realizar la reserva')
+            session.flashAll()
+            return response.redirect().back()
         }
 
 
