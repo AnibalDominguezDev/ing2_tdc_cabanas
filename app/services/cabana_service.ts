@@ -55,6 +55,7 @@ export class CabanaService {
     const cabana = await Cabana.findOrFail(id)
 
     await cabana.merge({
+      nombre: nuevosDatos.nombre,
       descripcion: nuevosDatos.descripcion,
       capacidad: nuevosDatos.capacidad,
       habitaciones: nuevosDatos.habitaciones,

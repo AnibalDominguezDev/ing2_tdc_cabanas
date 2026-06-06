@@ -33,7 +33,7 @@ export default class ReservasController {
                 messagesProvider: mensajesReserva
             })
 
-            // const reserva = await this.reservaService.NuevaReserva(datosValidados)
+            const reserva = await this.reservaService.NuevaReserva(datosValidados)
 
             // console.log('--- NUEVA RESERVA RECIBIDA ---')
             // console.log('================Datos recibidos===================')
@@ -44,7 +44,7 @@ export default class ReservasController {
             return response.json({
                 status: 'Éxito',
                 mensaje: 'Formulario recibido correctamente',
-                data: datosValidados
+                data: reserva
             })
 
         } catch (error: any) {

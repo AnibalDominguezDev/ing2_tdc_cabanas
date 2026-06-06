@@ -26,7 +26,7 @@ export default class CabanasController {
       await this.cabanaService.crear(datos, servicios, img)
 
       session.flash('success', 'Cabaña guardada correctamente')
-      return response.redirect().toRoute('cabanas')
+      return response.redirect().toRoute('gestion')
 
     } catch (error) {
       session.flash(request.except(['imagen', '_csrf']))
@@ -107,5 +107,6 @@ export default class CabanasController {
     const cabana = await this.cabanaService.obtenerPorSlug(params.slug)
 
     return view.render('pages/cabanas/verCabana', { cabana })
+
   }
 }

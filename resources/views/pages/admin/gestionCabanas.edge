@@ -82,7 +82,7 @@
             <thead class="bg-[#FCFBF9] border-y border-gray-100">
                 <tr>
                     <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase">Cabaña</th>
-                    <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase">Location</th>
+                    <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase">Capacidad</th>
                     <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase ">Estado</th>
                     <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase">Precio / Noche</th>
                     <th class="px-6 py-4 text-xs font-bold tracking-wider text-gray-500 uppercase ">Acciones
@@ -111,8 +111,8 @@
 
                     <!-- Ubicación -->
                     <td class="px-6 py-4">
-                        <p class="text-sm text-gray-600">{{ cabin.location }}</p>
-                        <p class="text-[10px] text-gray-400 mt-0.5">{{ cabin.coordinates }}</p>
+                        <p class="text-sm text-gray-600">{{ cabin.capacidad }} Personas</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">{{ cabin.habitaciones }} Habitaciones</p>
                     </td>
 
                     <!-- Estado (Badge dinámico) -->
@@ -141,7 +141,8 @@
 
                     <!-- Precio -->
                     <td class="px-6 py-4">
-                        <span class="text-sm font-semibold text-gray-700">${{ cabin.precioPorNoche }}</span>
+                        <span class="text-sm font-semibold text-gray-700">${{
+                            cabin.precioPorNoche.toLocaleString('es-AR') }}</span>
                     </td>
 
                     <!-- Acciones -->
@@ -149,28 +150,58 @@
                         <!-- Botón de edición que aparece al hacer hover -->
                         <div class="flex items-center gap-1">
 
+                            <a href="#" target="_blank" title="Vista previa"
+                                class="text-gray-400 hover:text-blue-500 transition-colors p-1">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                    <path
+                                        d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                </svg>
+                            </a>
 
-                            <a href="{{ urlFor('cabanas.editar', { slug: cabin.slug }) }}"
+
+                            <a href="{{ urlFor('cabanas.editar', { slug: cabin.slug }) }}" title="Editar"
                                 class="p-2 text-gray-400 hover:text-[#1B3B32] cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
-                                    </path>
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                    <path d="M13.5 6.5l4 4" />
+                                </svg>
+                            </a>
+
+                            <a href="#" title="Poner en mantenimiento"
+                                class="text-gray-400 hover:text-yellow-600 transition-colors p-1">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 21h4l13 -13a1.5 1.5 0 0 0 -4 -4l-13 13v4" />
+                                    <path d="M14.5 5.5l4 4" />
+                                    <path d="M12 8l-5 -5l-4 4l5 5" />
+                                    <path d="M7 8l-1.5 1.5" />
+                                    <path d="M16 12l5 5l-4 4l-5 -5" />
+                                    <path d="M16 17l-1.5 1.5" />
                                 </svg>
                             </a>
 
                             <!-- Botón Eliminar (Soft Delete) -->
                             <button x-data x-on:click="$dispatch('open-confirm-modal', { 
-    title: 'Archivar Cabaña',
-    message: `¿Estás seguro de que deseas archivar <b>{{ cabin.nombre }}</b>? Al ser una eliminación lógica, la propiedad dejará de estar visible pero podrá ser restaurada desde la papelera más adelante.`,
+    title: 'Eliminar Cabaña',
+    message: `¿Estás seguro de que deseas eliminar <b>{{ cabin.nombre }}</b>? Al ser una eliminación lógica, la propiedad dejará de estar visible pero podrá ser restaurada desde la papelera más adelante.`,
     actionUrl: `{{ route('cabanas.eliminar', { id: cabin.id }) }}?_method=DELETE`,
     cabanaId: {{cabin.id}},
-    confirmText: 'Sí, archivar cabaña'
-  })" class="p-2 text-gray-400 hover:text-orange-600 transition-colors cursor-pointer" title="Archivar cabaña">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                    </path>
+    confirmText: 'Sí, eliminar cabaña'
+  })" class="p-2 text-gray-400 hover:text-orange-600 transition-colors cursor-pointer" title="Eliminar cabaña">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M4 7l16 0" />
+                                    <path d="M10 11l0 6" />
+                                    <path d="M14 11l0 6" />
+                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
                                 </svg>
                             </button>
                         </div>
