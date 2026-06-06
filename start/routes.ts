@@ -30,6 +30,9 @@ router
 
 router.get('/register', [RegisterController, 'show'])
 router.post('/register', [RegisterController, 'store'])
+router.post('/reservar/:slug', [controllers.Reservas, 'store']).as('reservas.store')
+
+router.get('reservar/:slug', [controllers.Reservas, 'crear'])
 
 router
   .group(() => {

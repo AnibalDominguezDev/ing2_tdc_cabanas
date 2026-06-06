@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs'
+import flatpickr from "flatpickr";
 
 Alpine.data('alert', function () {
   return {
@@ -16,5 +17,8 @@ Alpine.data('alert', function () {
     },
   }
 })
+
+window.Alpine = Alpine
+window.flatpickr = flatpickr
 
 Alpine.start()

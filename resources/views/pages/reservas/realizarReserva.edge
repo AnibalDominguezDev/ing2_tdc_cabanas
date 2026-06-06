@@ -1,0 +1,395 @@
+@layout()
+<div x-data="bookingCalculator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-[#FFFEFC] min-h-screen">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+
+        <div class="lg:col-span-7">
+            <h1 class="text-4xl md:text-5xl font-serif text-[#1B3B32] mb-4">Finaliza tu Reserva</h1>
+            <p class="text-gray-500 text-sm md:text-base leading-relaxed mb-10 max-w-2xl">
+                Completa los detalles a continuación para asegurar tu refugio en el corazón del bosque. Tu estancia de
+                quietud comienza aquí.
+            </p>
+
+            <form action="{{ route('reservas.store', { slug: cabana.slug }) }}" method="POST" class="space-y-10">
+
+                {{ csrfField() }}
+
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg class="w-5 h-5 text-[#1B3B32]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        <h3 class="text-xl font-serif text-[#1B3B32]">Fechas de Estancia</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div
+                            class="bg-[#F7F6F2] p-4 rounded-xl flex justify-between items-center border border-transparent focus-within:border-[#1B3B32] transition-colors">
+                            <div class="w-full">
+                                <label
+                                    class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Check-in</label>
+                                <input x-ref="checkin" type="text" name="checkin" placeholder="Selecciona una fecha"
+                                    class="w-full bg-transparent border-none p-0 text-gray-800 focus:ring-0 text-sm font-medium outline-none">
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+
+                        <div
+                            class="bg-[#F7F6F2] p-4 rounded-xl flex justify-between items-center border border-transparent focus-within:border-[#1B3B32] transition-colors">
+                            <div class="w-full">
+                                <label
+                                    class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Check-out</label>
+                                <input x-ref="checkout" type="text" name="checkout" placeholder="Selecciona una fecha"
+                                    class="w-full bg-transparent border-none p-0 text-gray-800 focus:ring-0 text-sm font-medium outline-none">
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div>
+                    hola
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-[#1B3B32]" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                    </path>
+                                </svg>
+                                <h3 class="text-xl font-serif text-[#1B3B32]">Información de los Huéspedes</h3>
+                            </div>
+
+                            <button type="button" x-show="huespedes.length < maxhuespedes" x-on:click="addAcompanante()"
+                                class="text-[10px] font-bold tracking-wider text-gray-400 uppercase hover:text-[#1B3B32] transition-colors flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Añadir Acompañante
+                            </button>
+                        </div>
+
+                        <div class="bg-[#F7F6F2] p-6 rounded-r-xl rounded-l-sm border-l-4 border-[#1B3B32] mb-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Nombre</label>
+                                    <input type="text" name="nombre" placeholder="Ej. Julian"
+                                        value="{{ old('nombre') || '' }}" required
+                                        class="w-full bg-white border border-transparent rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#1B3B32] focus:ring-1 focus:ring-[#1B3B32] transition-colors shadow-sm">
+                                    @inputError('nombre')
+                                    <span class="text-red-500 text-[10px] mt-1 font-semibold block">{{
+                                        $messages.join(',') }}</span>
+                                    @end
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Apellido</label>
+                                    <input type="text" name="apellido" placeholder="Ej. Moretti"
+                                        value="{{ old('apellido') || '' }}" required
+                                        class="w-full bg-white border border-transparent rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#1B3B32] focus:ring-1 focus:ring-[#1B3B32] transition-colors shadow-sm">
+                                    @inputError('apellido')
+                                    <span class="text-red-500 text-[10px] mt-1 font-semibold block">{{
+                                        $messages.join(',') }}</span>
+                                    @end
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">DNI
+                                        / Pasaporte</label>
+                                    <input type="text" name="documento" placeholder="Documento de identidad"
+                                        value="{{ old('documento') || '' }}" required
+                                        class="w-full bg-white border border-transparent rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#1B3B32] focus:ring-1 focus:ring-[#1B3B32] transition-colors shadow-sm">
+                                    @inputError('documento')
+                                    <span class="text-red-500 text-[10px] mt-1 font-semibold block">{{
+                                        $messages.join(',') }}</span>
+                                    @end
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Teléfono
+                                        (Opcional)</label>
+                                    <input type="tel" name="telefono" placeholder="+54 000 000 000"
+                                        value="{{ old('telefono') || '' }}"
+                                        class="w-full bg-white border border-transparent rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#1B3B32] focus:ring-1 focus:ring-[#1B3B32] transition-colors shadow-sm">
+                                    @inputError('telefono')
+                                    <span class="text-red-500 text-[10px] mt-1 font-semibold block">{{
+                                        $messages.join(',') }}</span>
+                                    @end
+                                </div>
+                            </div>
+                        </div>
+
+                        <div x-show="hayErrorhuespedes" x-cloak
+                            class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-4 text-sm font-medium mt-4">
+                            Datos de acompañantes no validos. Por favor intentelo denuevo
+                        </div>
+
+                        <template x-for="(acompanante, index) in huespedes" :key="acompanante.id">
+                            <div class="bg-[#F7F6F2] p-6 rounded-xl border border-gray-100 relative mt-4">
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest"
+                                        x-text="`Acompañante ${index + 1}`"></h4>
+                                    <button type="button" x-on:click="removeAcompanante(acompanante.id)"
+                                        class="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                        title="Eliminar acompañante">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Nombre</label>
+                                        <input type="text" x-bind:name="`huespedes[${index}][nombre]`"
+                                            x-model="acompanante.nombre" placeholder="Ej. Pedro"
+                                            class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
+                                            :class="erroresServidor[`huespedes.${index}.nombre`] ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
+
+                                        <template x-if="erroresServidor[`huespedes.${index}.nombre`]">
+                                            <span class="text-red-500 text-[10px] mt-1 font-semibold block"
+                                                x-text="erroresServidor[`huespedes.${index}.nombre`].join(', ')"></span>
+                                        </template>
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Apellido</label>
+                                        <input type="text" x-bind:name="`huespedes[${index}][apellido]`"
+                                            x-model="acompanante.apellido" placeholder="Ej. Pascal"
+                                            class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
+                                            :class="erroresServidor[`huespedes.${index}.apellido`] ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
+                                        <template x-if="erroresServidor[`huespedes.${index}.apellido`]">
+                                            <span class="text-red-500 text-[10px] mt-1 font-semibold block"
+                                                x-text="erroresServidor[`huespedes.${index}.apellido`].join(', ')"></span>
+                                        </template>
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">DNI
+                                        </label>
+                                        <input type="text" x-bind:name="`huespedes[${index}][documento]`"
+                                            x-model="acompanante.documento" placeholder="Sin puntos ni espacios"
+                                            class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
+                                            :class="erroresServidor[`huespedes.${index}.documento`] ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
+                                        <template x-if="erroresServidor[`huespedes.${index}.documento`]">
+                                            <span class="text-red-500 text-[10px] mt-1 font-semibold block"
+                                                x-text="erroresServidor[`huespedes.${index}.documento`].join(', ')"></span>
+                                        </template>
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Teléfono
+                                            (Opcional)</label>
+                                        <input type="tel" x-bind:name="`huespedes[${index}][telefono]`"
+                                            x-model="acompanante.telefono" placeholder="Ej. 3794123456"
+                                            class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
+                                            :class="erroresServidor[`huespedes.${index}.telefono`] ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
+                                        <template x-if="erroresServidor[`huespedes.${index}.telefono`]">
+                                            <span class="text-red-500 text-[10px] mt-1 font-semibold block"
+                                                x-text="erroresServidor[`huespedes.${index}.telefono`].join(', ')"></span>
+                                        </template>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="lg:col-span-5">
+            <div
+                class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden sticky top-8">
+
+                <div class="relative h-48 bg-gray-200">
+                    <img src="{{ cabana.imageUrl || 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=800&h=400&fit=crop' }}"
+                        class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-linear-to-t from-black/80 to-transparent"></div>
+                    <div class="absolute bottom-4 left-6 right-6">
+                        <h3 class="text-2xl font-serif text-white">{{ cabana.nombre }}</h3>
+                    </div>
+                </div>
+
+
+
+                <div class="p-6 sm:p-8">
+
+                    <div x-show="noches === 0" x-cloak
+                        class="text-center py-4 text-sm text-gray-500 border-b border-gray-100 mb-6">
+                        Selecciona tus fechas de estadía para ver el desglose del precio.
+                    </div>
+
+                    <div x-show="noches > 0" x-cloak
+                        class="space-y-4 text-sm text-gray-600 border-b border-gray-100 pb-6 mb-6">
+                        <div class="flex justify-between">
+                            <span x-text="`${noches} noches x $${precioNoche}`"></span>
+                            <span class="font-medium text-gray-900" x-text="`$${subtotal}`"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Gastos de limpieza</span>
+                            <span class="font-medium text-gray-900" x-text="`$${limpieza}`"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Tasa de servicio</span>
+                            <span class="font-medium text-gray-900" x-text="`$${servicio}`"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-lg font-serif text-[#1B3B32]">Total</span>
+                        <span class="text-2xl font-serif text-[#1B3B32]"
+                            x-text="`$${total.toLocaleString('es-AR')}`"></span>
+                    </div>
+
+                    <button type="submit" onclick="document.querySelector('form').submit()"
+                        class="w-full py-4 bg-[#1B3B32] hover:bg-[#122822] text-white text-sm font-bold tracking-wider rounded-xl transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        :disabled="noches === 0">
+                        Confirmar Reserva
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('alpine:init', () => {
+
+        // 1. Le pedimos a Edge que traiga los datos de forma simple.
+        // Si no hay datos, le decimos que imprima la palabra 'null' o '{}'.
+        const huespedesDesdeServidor = {{{ flashMessages.has('huespedes') ? JSON.stringify(flashMessages.get('huespedes')) : 'null'
+    }}};
+    const serverErrors = {{{ flashMessages.has('errors') ? JSON.stringify(flashMessages.get('errors')) : '{}' }}};
+
+    // 2. Aplicamos el valor por defecto usando JavaScript puro (esto evita que Edge colapse)
+    const oldhuespedes = huespedesDesdeServidor || [{ nombre: '', apellido: '', documento: '', telefono: '' }];
+
+    // 3. Les asignamos un ID aleatorio para Alpine
+    const huespedesRecuperados = oldhuespedes.map(a => ({ ...a, id: Date.now() + Math.random() }));
+
+    Alpine.data('bookingCalculator', () => ({
+
+        erroresServidor: serverErrors,
+
+        get hayErrorhuespedes() {
+            // Revisa si VineJS mandó algún error que tenga la palabra "huespedes"
+            return Object.keys(this.erroresServidor).some(llave => llave.includes('huespedes'));
+        },
+        maxhuespedes: {{ cabana.capacidad || 0 }},
+        huespedes: huespedesRecuperados,
+
+
+        precioNoche: {{ cabana.precioPorNoche || 240 }},
+        limpieza: 85,
+        servicio: 115,
+        noches: 0,
+        checkinDate: null,
+        checkoutDate: null,
+
+        // Variables para guardar los calendarios
+        fpCheckin: null,
+        fpCheckout: null,
+
+        maxhuespedes: {{ cabana.capacidad - 1 || 0 }}, // Traemos la capacidad real desde el modelo
+        huespedes: [], // Empezamos sin acompañantes extra
+
+        addAcompanante() {
+        // Solo agrega si no superamos la capacidad máxima de acompañantes
+        if(this.huespedes.length < this.maxhuespedes ) {
+        // Usamos Date.now() como un ID único e irrepetible para que Alpine no confunda las cajas
+        this.huespedes.push({ id: Date.now() });
+    }
+            },
+
+    removeAcompanante(id) {
+        // Filtramos el array descartando el ID que el usuario seleccionó eliminar
+        this.huespedes = this.huespedes.filter(persona => persona.id !== id);
+    },
+
+        get subtotal() { return this.noches * this.precioNoche; },
+        get total() { return this.noches > 0 ? this.subtotal + this.limpieza + this.servicio : 0; },
+
+    init() {
+
+        this.fpCheckout = flatpickr(this.$refs.checkout, {
+            locale: 'es',
+            dateFormat: 'Y-m-d',
+            altInput: true,
+            altFormat: "d / m / Y",
+            onChange: (selectedDates) => {
+                this.checkoutDate = selectedDates[0];
+                this.calculateNights();
+            }
+        });
+
+        // 2. Iniciamos el Check-in
+        this.fpCheckin = flatpickr(this.$refs.checkin, {
+            minDate: 'today',
+            locale: 'es',
+            dateFormat: 'Y-m-d',
+            altInput: true,
+            altFormat: "d / m / Y",
+            onChange: (selectedDates) => {
+                this.checkinDate = selectedDates[0];
+
+                // Forzamos que el checkout sea mínimo 1 día después
+                this.fpCheckout.set('minDate', selectedDates[0].fp_incr(1));
+
+                // Si el checkout actual es inválido, lo limpiamos
+                if (this.checkoutDate && this.checkoutDate <= this.checkinDate) {
+                    this.fpCheckout.clear();
+                    this.checkoutDate = null;
+                }
+
+                this.calculateNights();
+
+
+                setTimeout(() => {
+                    this.fpCheckout.open();
+                }, 100);
+            }
+        });
+    },
+
+    calculateNights() {
+        if (this.checkinDate && this.checkoutDate) {
+
+            const diffTime = Math.abs(this.checkoutDate - this.checkinDate);
+            this.noches = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        } else {
+            this.noches = 0;
+        }
+    }
+    }))
+  })
+</script>
+
+
+@end
