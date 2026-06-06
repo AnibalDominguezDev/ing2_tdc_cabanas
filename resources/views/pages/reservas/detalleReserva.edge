@@ -1,0 +1,127 @@
+@layout()
+
+<div class="min-h-screen bg-[#FFFEFC] px-4 py-12 text-[#2D4739] sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-8">
+      <a href="/mis-reservas" class="text-sm font-semibold text-[#8B5E3C] transition hover:text-[#2D4739]">
+        Volver a Mis Reservas
+      </a>
+    </div>
+
+    <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <section>
+        <div class="overflow-hidden rounded-2xl border border-[#8B5E3C]/10 bg-[#F9F5F0] shadow-sm">
+          <img
+            src="{{ reserva.cabana.imgUrl ? await driveUrl(reserva.cabana.imgUrl) : 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&h=800&fit=crop' }}"
+            alt="{{ reserva.cabana.nombre }}"
+            class="h-80 w-full object-cover">
+
+          <div class="p-6 sm:p-8">
+            <div class="mb-4 flex flex-wrap items-center gap-3">
+              <h1 class="text-4xl font-serif text-[#1B3B32]">
+                {{ reserva.cabana.nombre }}
+              </h1>
+
+              <span class="rounded-full bg-[#2D4739]/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#2D4739]">
+                {{ reserva.estado.estado }}
+              </span>
+            </div>
+
+            <p class="text-sm leading-6 text-[#2D4739]/70">
+              {{ reserva.cabana.descripcion }}
+            </p>
+          </div>
+        </div>
+
+        <section class="mt-6 rounded-2xl border border-[#8B5E3C]/10 bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-2xl font-serif text-[#1B3B32]">
+            Servicios incluidos
+          </h2>
+
+          @if(reserva.cabana.servicios.length > 0)
+            <div class="grid gap-3 sm:grid-cols-2">
+              @each(servicio in reserva.cabana.servicios)
+                <div class="rounded-xl bg-[#F9F5F0] px-4 py-3 text-sm font-semibold text-[#2D4739]">
+                  {{ servicio.nombre }}
+                </div>
+              @endeach
+            </div>
+          @else
+            <p class="text-sm text-[#2D4739]/70">
+              Esta cabana no tiene servicios cargados.
+            </p>
+          @endif
+        </section>
+      </section>
+
+      <aside class="space-y-6">
+        <section class="rounded-2xl border border-[#8B5E3C]/10 bg-[#F9F5F0] p-6 shadow-sm">
+          <h2 class="mb-5 text-2xl font-serif text-[#1B3B32]">
+            Detalle de la estadia
+          </h2>
+
+          <div class="space-y-4 text-sm">
+            <div class="flex justify-between gap-4 border-b border-[#8B5E3C]/10 pb-3">
+              <span class="font-semibold text-[#8B5E3C]">Entrada</span>
+              <span>{{ reserva.fechaInicio.toFormat('dd/MM/yyyy') }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4 border-b border-[#8B5E3C]/10 pb-3">
+              <span class="font-semibold text-[#8B5E3C]">Salida</span>
+              <span>{{ reserva.fechaFin.toFormat('dd/MM/yyyy') }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4 border-b border-[#8B5E3C]/10 pb-3">
+              <span class="font-semibold text-[#8B5E3C]">Noches</span>
+              <span>{{ reserva.fechaFin.diff(reserva.fechaInicio, 'days').days }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4 border-b border-[#8B5E3C]/10 pb-3">
+              <span class="font-semibold text-[#8B5E3C]">Precio por noche</span>
+              <span>${{ reserva.cabana.precioPorNoche }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4 pt-1 text-lg font-bold text-[#1B3B32]">
+              <span>Total</span>
+              <span>${{ reserva.precioTotal }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-2xl border border-[#8B5E3C]/10 bg-white p-6 shadow-sm">
+          <h2 class="mb-5 text-2xl font-serif text-[#1B3B32]">
+            Huespedes
+          </h2>
+
+          @if(reserva.huespedes.length > 0)
+            <div class="space-y-3">
+              @each(huesped in reserva.huespedes)
+                <div class="rounded-xl bg-[#F9F5F0] p-4">
+                  <p class="font-semibold text-[#2D4739]">
+                    {{ huesped.nombre }} {{ huesped.apellido }}
+                  </p>
+
+                  <p class="mt-1 text-sm text-[#2D4739]/70">
+                    DNI/Pasaporte: {{ huesped.dni }}
+                  </p>
+
+                  @if(huesped.telefono)
+                    <p class="mt-1 text-sm text-[#2D4739]/70">
+                      Telefono: {{ huesped.telefono }}
+                    </p>
+                  @endif
+                </div>
+              @endeach
+            </div>
+          @else
+            <p class="text-sm text-[#2D4739]/70">
+              No hay huespedes cargados para esta reserva.
+            </p>
+          @endif
+        </section>
+      </aside>
+    </div>
+  </div>
+</div>
+
+@end

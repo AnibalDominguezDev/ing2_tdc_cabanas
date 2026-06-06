@@ -135,14 +135,15 @@ export class ReservaService {
         console.log(datosHuesped)
 
 
+        const telefono = datosHuesped.telefono?.trim() || null
         const huesped = await Huesped.updateOrCreate(
-          { dni: datosHuesped.documento },
+          { dni: datosHuesped.documento }, // Condición de búsqueda
           {
             nombre: datosHuesped.nombre,
             apellido: datosHuesped.apellido,
             telefono: datosHuesped.telefono
-          },
-          { client: trx }
+          }, // Datos a guardar (o actualizar)
+          { client: trx } // Transacción
         )
         huespedesIds.push(huesped.id)
       }

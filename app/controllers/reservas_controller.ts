@@ -10,6 +10,54 @@ export default class ReservasController {
 
     private cabana = new CabanaService()
 
+    private formatearErroresValidacion(error: any) {
+        const errores: Record<string, string[]> = {}
+
+        for (const item of error.messages || []) {
+            const field = item.field || 'formulario'
+
+            if (!errores[field]) {
+                errores[field] = []
+            }
+
+            errores[field].push(item.message || 'Revisa este campo.')
+        }
+
+        return errores
+    }
+
+    private tieneErroresValidacion(error: any) {
+        return Array.isArray(error?.messages)
+    }
+
+    private validarDocumentosRepetidos(datos: any) {
+        const errores: Record<string, string[]> = {}
+        const documentos = [
+            { field: 'documento', value: datos.documento },
+            ...(datos.huespedes || []).map((huesped: any, index: number) => ({
+                field: `huespedes.${index}.documento`,
+                value: huesped.documento,
+            })),
+        ]
+        const vistos = new Map<string, string>()
+
+        for (const documento of documentos) {
+            if (!documento.value) {
+                continue
+            }
+
+            if (vistos.has(documento.value)) {
+                const primerCampo = vistos.get(documento.value)!
+                errores[documento.field] = ['Este DNI ya fue cargado en la reserva.']
+                errores[primerCampo] = ['Este DNI ya fue cargado en la reserva.']
+            } else {
+                vistos.set(documento.value, documento.field)
+            }
+        }
+
+        return errores
+    }
+
     public async crear({ params, view, session, response }: HttpContext) {
 
         if (!session.get('usuario_id')) {
@@ -35,9 +83,29 @@ export default class ReservasController {
 
             const cabana = await this.cabana.obtenerPorSlug(params.slug)
 
-            const datosValidados = await request.validateUsing(ReservaValidator, {
-                messagesProvider: mensajesReserva
-            })
+            let datosValidados
+
+            try {
+                datosValidados = await request.validateUsing(ReservaValidator, {
+                    messagesProvider: mensajesReserva
+                })
+            } catch (error: any) {
+                if (this.tieneErroresValidacion(error)) {
+                    session.flash('errors', this.formatearErroresValidacion(error))
+                    session.flashAll()
+                    return response.redirect().back()
+                }
+
+                throw error
+            }
+
+            const erroresDocumentos = this.validarDocumentosRepetidos(datosValidados)
+
+            if (Object.keys(erroresDocumentos).length > 0) {
+                session.flash('errors', erroresDocumentos)
+                session.flashAll()
+                return response.redirect().back()
+            }
 
             const datosReserva = {
                 ...datosValidados,

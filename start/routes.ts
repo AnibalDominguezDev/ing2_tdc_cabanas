@@ -12,6 +12,7 @@ import { controllers } from '#generated/controllers'
 import router from '@adonisjs/core/services/router'
 import RegisterController from '#controllers/auth/register_controller'
 import LoginController from '#controllers/auth/login_controller'
+import MisReservasController from '#controllers/mis_reservas_controller'
 
 router.on('/').render('pages/home').as('home')
 router.get('/cabanas', [controllers.Cabanas, 'listar']).as('cabanas')
@@ -30,6 +31,8 @@ router
 
 router.get('/register', [RegisterController, 'show'])
 router.post('/register', [RegisterController, 'store'])
+router.get('/mis-reservas', [MisReservasController, 'index']).as('misReservas')
+router.get('/mis-reservas/:id', [MisReservasController, 'show']).as('misReservas.detalle')
 router.post('/reservar/:slug', [controllers.Reservas, 'store']).as('reservas.store')
 
 router.get('reservar/:slug', [controllers.Reservas, 'crear'])
