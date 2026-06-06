@@ -24,6 +24,9 @@ router.put('cabanas/modificar', [controllers.Cabanas, 'actualizar']).as('modific
 router.delete('cabanas/eliminar/:id', [controllers.Cabanas, 'eliminarCabana']).as('cabanas.eliminar')
 router.get('/register', [RegisterController, 'show'])
 router.post('/register', [RegisterController, 'store'])
+router.post('/reservar/:slug', [controllers.Reservas, 'store']).as('reservas.store')
+
+router.get('reservar/:slug', [controllers.Reservas, 'crear'])
 
 router
   .group(() => {
