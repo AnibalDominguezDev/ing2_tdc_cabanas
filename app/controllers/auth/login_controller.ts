@@ -33,10 +33,11 @@ export default class LoginController {
       session.put('usuario_rol', usuario.idRol)
       session.put('usuario_apellido', usuario.apellido)
       session.put('usuario_email', usuario.email)
+      session.put('usuario_dni', usuario.dni)
       session.put(
-         'usuario_rol_nombre',
-          usuario.idRol === 1 ? 'Cliente' : 'Administrador'
-        )
+        'usuario_rol_nombre',
+        usuario.idRol === 1 ? 'Cliente' : 'Administrador'
+      )
 
       if (usuario.idRol === 2) {
         return response.redirect().toRoute('gestion')
