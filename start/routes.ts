@@ -29,6 +29,8 @@ router
     router.get('/cabanas/mantenimiento/:id', [controllers.Cabanas, 'mantenimiento']).as('cabanas.mantenimiento')
     router.get('gestion/cabanas-eliminadas', [controllers.Cabanas, 'listarEliminadas']).as('cabanas.eliminadas')
     router.get('gestion/reactivar/:id', [controllers.Cabanas, 'reactivar']).as('cabana.reactivar')
+    router.get('admin/reservas', [controllers.Reservas, 'listarTodasAdmin']).as('admin.reservas')
+    router.get('admin/reservas/:id', [controllers.Reservas, 'detalleReservaAdmin']).as('admin.detalleReserva')
   })
   .use(middleware.admin())
 
@@ -47,6 +49,6 @@ router
 
     router.get('/login', [LoginController, 'show'])
     router.post('/login', [LoginController, 'store'])
-    router.post('/logout', [LoginController, 'logout'])
+    router.post('/logout', [LoginController, 'logout']).as('auth.logout')
   })
   .use(middleware.guest())
