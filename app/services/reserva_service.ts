@@ -168,6 +168,33 @@ export class ReservaService {
     }
   }
 
+  async obtenerTodas() {
+
+    return await Reserva.query().preload('estado')
+      .preload('huespedes')
+      .preload('cabana', (cabanaQuery) => {
+        cabanaQuery.preload('servicios')
+      })
+
+  }
+
+  async obtenerReservaPorId(id: number) {
+
+    const reserva = await Reserva.query()
+      .where('id', id)
+      .preload('estado')
+      .preload('huespedes')
+      .preload('cabana', (cabanaQuery) => {
+        cabanaQuery.preload('servicios')
+      })
+      .firstOrFail()
+
+
+    return reserva
+
+
+  }
+
   // async NuevaReserva(datos: any) {
   //   console.log('===========================NUEVA==================================')
   //   console.log({ datos })
