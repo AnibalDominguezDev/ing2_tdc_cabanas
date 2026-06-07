@@ -78,9 +78,11 @@ export default class CabanasController {
 
     try {
 
-      const id = params.id
+      const cabanaId = params.id
 
-      await this.cabanaService.eliminar(id)
+
+
+      await this.cabanaService.eliminar(cabanaId)
       session.flash('success', 'Cabaña eliminada correctamente')
       return response.redirect().back()
 
@@ -92,9 +94,58 @@ export default class CabanasController {
 
   }
 
+  async mantenimiento({ params, session, response }: HttpContext) {
+
+
+    try {
+
+      const cabanaId = params.id
+
+      const estadoActual = await this.cabanaService.obtenerEstadoActual(cabanaId)
+
+      if (estadoActual.nombre === 'Mantenimiento') {
+        await this.cabanaService.liberarCabana(cabanaId)
+        session.flash('success', 'La cabaña fue reactivada')
+
+      } else {
+        await this.cabanaService.establecerMantenimiento(cabanaId)
+        session.flash('success', 'La cabaña ahora esta en mantenimiento')
+      }
+      return response.redirect().back()
+
+    } catch (error: any) {
+      session.flash('error', error.message)
+      return response.redirect().back()
+    }
+  }
+
+  async reactivar({ params, session, response }: HttpContext) {
+
+    try {
+
+      const cabanaId = params.id
+
+      await this.cabanaService.liberarCabana(cabanaId)
+      session.flash('success', 'La cabaña fue reactivada')
+
+    } catch (error: any) {
+      session.flash('error', error.message)
+
+    } finally {
+      return response.redirect().back()
+    }
+
+
+  }
+
   async admin({ view }: HttpContext) {
-    const cabanas = await this.cabanaService.obtenerTodas()
+    const cabanas = await this.cabanaService.obtenerDisponibles()
     return view.render('pages/admin/gestionCabanas', { cabanas })
+  }
+
+  async listarEliminadas({ view }: HttpContext) {
+    const cabanas = await this.cabanaService.obtenerEliminadas()
+    return view.render('pages/admin/gestionCabanasEliminadas', { cabanas })
   }
 
   async listar({ view }: HttpContext) {

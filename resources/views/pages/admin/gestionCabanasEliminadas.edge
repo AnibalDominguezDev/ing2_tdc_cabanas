@@ -25,28 +25,18 @@
     <div class="flex flex-col gap-2 shrink-0">
         <div class="flex items-center gap-3">
             <!-- Botón Filter -->
-            <a href="{{urlFor('cabanas.eliminadas')}}"
+            <a href="{{urlFor('gestion')}}"
                 class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-800 bg-[#F0EEEB] rounded-md hover:bg-gray-200 transition-colors">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M4 7l16 0" />
-                    <path d="M10 11l0 6" />
-                    <path d="M14 11l0 6" />
-                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    <path d="M5 12l14 0" />
+                    <path d="M5 12l6 6" />
+                    <path d="M5 12l6 -6" />
                 </svg>
-                Ver eliminadas
+                Volver a cabanas activas
             </a>
 
-            <!-- Botón Add New -->
-            <a href="{{urlFor('nuevaCabana')}}"
-                class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-[#1B3B32] rounded-md hover:bg-[#122822] transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Nueva cabaña
-            </a>
         </div>
 
     </div>
@@ -58,7 +48,7 @@
 
     <!-- Cabecera de la Tabla -->
     <div class="px-6 py-5 flex items-center justify-between bg-white">
-        <h3 class="text-xl font-serif text-[#1B3B32]">Cabañas en el sistema</h3>
+        <h3 class="text-xl font-serif text-[#1B3B32]">Cabañas eliminadas</h3>
 
         <div class="flex items-center gap-4 text-sm text-gray-500">
             <span>Showing 1–10 of 24</span>
@@ -165,33 +155,7 @@
                             </a>
 
 
-                            <a href="{{ urlFor('cabanas.editar', { slug: cabin.slug }) }}" title="Editar"
-                                class="p-2 text-gray-400 hover:text-[#1B3B32] cursor-pointer">
-                                <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                </svg>
-                            </a>
-
-                            @if(cabin.nombreEstado !== 'Mantenimiento')
-                            <a href="{{ urlFor('cabanas.mantenimiento', { id: cabin.id }) }}"
-                                title="Poner en mantenimiento"
-                                class="text-gray-400 hover:text-yellow-600 transition-colors p-1">
-                                <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M3 21h4l13 -13a1.5 1.5 0 0 0 -4 -4l-13 13v4" />
-                                    <path d="M14.5 5.5l4 4" />
-                                    <path d="M12 8l-5 -5l-4 4l5 5" />
-                                    <path d="M7 8l-1.5 1.5" />
-                                    <path d="M16 12l5 5l-4 4l-5 -5" />
-                                    <path d="M16 17l-1.5 1.5" />
-                                </svg>
-                            </a>
-                            @elseif(cabin.nombreEstado === 'Mantenimiento')
-                            <a href="{{ urlFor('cabanas.mantenimiento', { id: cabin.id }) }}" title="Reactivar cabaña"
+                            <a href="{{ urlFor('cabana.reactivar', { id: cabin.id }) }}" title="Reactivar cabaña"
                                 class="text-gray-400 hover:text-green-500 transition-colors p-1">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -200,25 +164,8 @@
                                     <path d="M12 4l0 8" />
                                 </svg>
                             </a>
-                            @endif
-                            <!-- Botón Eliminar (Soft Delete) -->
-                            <button x-data x-on:click="$dispatch('open-confirm-modal', { 
-    title: 'Eliminar Cabaña',
-    message: `¿Estás seguro de que deseas eliminar <b>{{ cabin.nombre }}</b>? Al ser una eliminación lógica, la propiedad dejará de estar visible pero podrá ser restaurada desde la papelera más adelante.`,
-    actionUrl: `{{ route('cabanas.eliminar', { id: cabin.id }) }}?_method=DELETE`,
-    cabanaId: {{cabin.id}},
-    confirmText: 'Sí, eliminar cabaña'
-  })" class="p-2 text-gray-400 hover:text-orange-600 transition-colors cursor-pointer" title="Eliminar cabaña">
-                                <svg class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                </svg>
-                            </button>
+
+
                         </div>
                     </td>
 
