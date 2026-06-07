@@ -14,7 +14,7 @@ export default class MisReservasController {
       .where('idUsuario', usuarioId)
       .preload('cabana')
       .preload('estado')
-      .orderBy('fechaInicio', 'desc')
+      .orderBy('createdAt', 'desc')
 
     return view.render('pages/reservas/misReservas', { reservas })
   }
