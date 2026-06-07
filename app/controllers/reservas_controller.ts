@@ -122,7 +122,7 @@ export default class ReservasController {
             console.dir(datosReserva, { depth: null })
 
             session.flash('success', 'Reserva realizada correctamente')
-            return response.redirect().toRoute('home')
+            return response.redirect().toRoute('misReservas')
 
         } catch (error: any) {
 
@@ -135,5 +135,21 @@ export default class ReservasController {
         }
 
 
+    }
+
+    public async listarTodasAdmin({ view }: HttpContext) {
+
+        const reservas = await this.reservaService.obtenerTodas()
+
+        return view.render('pages/admin/listarReservas', { reservas })
+    }
+
+    public async detalleReservaAdmin({ view, params }: HttpContext) {
+
+        const reservaId = params.id
+
+        const reserva = await this.reservaService.obtenerReservaPorId(reservaId)
+
+        return view.render('pages/admin/detalleReserva', { reserva })
     }
 }
