@@ -25,6 +25,9 @@ router
     router.post('cabanas/guardar', [controllers.Cabanas, 'agregarCabana']).as('guardar')
     router.put('cabanas/modificar', [controllers.Cabanas, 'actualizar']).as('modificar')
     router.delete('cabanas/eliminar/:id', [controllers.Cabanas, 'eliminarCabana']).as('cabanas.eliminar')
+    router.get('/cabanas/mantenimiento/:id', [controllers.Cabanas, 'mantenimiento']).as('cabanas.mantenimiento')
+    router.get('gestion/cabanas-eliminadas', [controllers.Cabanas, 'listarEliminadas']).as('cabanas.eliminadas')
+    router.get('gestion/reactivar/:id', [controllers.Cabanas, 'reactivar']).as('cabana.reactivar')
   })
   .use(middleware.admin())
 

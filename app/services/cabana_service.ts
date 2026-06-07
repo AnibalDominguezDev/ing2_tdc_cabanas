@@ -17,10 +17,18 @@ export class CabanaService {
     return Cabana.findOrFail(id)
   }
 
+  async obtenerDisponibles() {
+    return await Cabana.query().whereNot('idEstado', '4')
+  }
+
   async obtenerActivas() {
     return await Cabana.query()
       .where('id_estado', 1)
       .preload('servicios')
+  }
+
+  async obtenerEliminadas() {
+    return await Cabana.query().where('idEstado', 4)
   }
 
   async obtenerPorSlug(slug: string) {
@@ -108,6 +116,17 @@ export class CabanaService {
 
     // 3. Si todo salió bien, actualizamos la base de datos
     cabana.idEstado = nuevoEstadoId
+    await cabana.save()
+
+    return cabana
+  }
+
+  async establecerMantenimiento(idCabana: number) {
+
+    const cabana = await Cabana.findOrFail(idCabana)
+    const estadoActual = EstadoCabanaFactory.fabricar(cabana.idEstado)
+
+    cabana.idEstado = estadoActual.ponerEnMantenimiento()
     await cabana.save()
 
     return cabana
