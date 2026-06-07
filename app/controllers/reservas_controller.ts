@@ -148,6 +148,8 @@ export default class ReservasController {
 
         const reservaId = params.id
 
+        this.reservaService.calcularEstado(reservaId)
+
         const reserva = await this.reservaService.obtenerReservaPorId(reservaId)
 
         return view.render('pages/admin/detalleReserva', { reserva })

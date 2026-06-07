@@ -1,6 +1,5 @@
 @adminLayout()
 <header class="max-w-7xl space-y-8">
-    -
     <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
 
         <div class="max-w-2xl">
@@ -74,17 +73,18 @@
                     </td>
 
                     <td class="px-6 py-4">
-                        @if(reserva.estado === 'confirmed' || reserva.estado === 'CONFIRMED')
-                        <span
-                            class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-green-100 text-green-700">
-                            Confirmada
-                        </span>
-                        @elseif(reserva.estado === 'pending' || reserva.estado === 'PENDING')
+                        @if(reserva.idEstadoReserva === 1 || reserva.estado === 'Pendiente')
                         <span
                             class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-orange-100 text-orange-700">
                             Pendiente
                         </span>
-                        @elseif(reserva.estado === 'completed' || reserva.estado === 'COMPLETED')
+                        @elseif(reserva.idEstadoReserva === 2 || reserva.estado === 'Activa')
+                        <span
+                            class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-green-100 text-green-700">
+
+                            Activa
+                        </span>
+                        @elseif(reserva.idEstadoReserva === 3 || reserva.estado === 'Finalizada')
                         <span
                             class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-gray-100 text-gray-600">
                             Completada

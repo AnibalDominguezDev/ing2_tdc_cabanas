@@ -95,8 +95,8 @@ export class ReservaService {
       // 3. Calculamos y validamos ANTES de asignar al modelo
       const montoTotal = precio * noches
 
-      // Agregamos un console.log temporal para ayudarte a depurar qué dato está roto
-      console.log(`Debug -> Precio Cabana: ${precio}, Noches: ${noches}, Total: ${montoTotal}`)
+
+      //console.log(`Debug -> Precio Cabana: ${precio}, Noches: ${noches}, Total: ${montoTotal}`)
 
       if (isNaN(montoTotal) || montoTotal <= 0) {
         throw new Error(`Error interno: No se pudo calcular el precio total. Precio detectado: ${cabana.precioPorNoche}`)
@@ -122,8 +122,8 @@ export class ReservaService {
       // Nos aseguramos de que sea un array válido (si por alguna razón es undefined, usamos un array vacío [])
       const listaHuespedes = Array.isArray(datos.huespedes) ? datos.huespedes : []
 
-      console.log(`Debug ->--------------------------------------`)
-      console.log(`Debug -> lista de Huespedes: ${{ datos }}`)
+      //console.log(`Debug ->--------------------------------------`)
+      //console.log(`Debug -> lista de Huespedes: ${{ datos }}`)
 
       const titular = { nombre: datos.nombre, apellido: datos.apellido, documento: datos.documento, telefono: datos.telefono }
 
@@ -131,8 +131,8 @@ export class ReservaService {
 
       for (const datosHuesped of listaHuespedes) {
 
-        console.log(`Debug ->--------------------------------------`)
-        console.log(datosHuesped)
+        // console.log(`Debug ->--------------------------------------`)
+        //console.log(datosHuesped)
 
 
         const telefono = datosHuesped.telefono?.trim() || null
@@ -141,7 +141,7 @@ export class ReservaService {
           {
             nombre: datosHuesped.nombre,
             apellido: datosHuesped.apellido,
-            telefono: datosHuesped.telefono
+            telefono: telefono
           }, // Datos a guardar (o actualizar)
           { client: trx } // Transacción
         )
@@ -195,8 +195,54 @@ export class ReservaService {
 
   }
 
-  // async NuevaReserva(datos: any) {
-  //   console.log('===========================NUEVA==================================')
-  //   console.log({ datos })
-  // }
+  /**
+   * Obtiene el estado de la reserva por fechas, lo sincroniza en la base de datos 
+   * si está desactualizado y retorna el estado correspondiente.
+   */
+  async calcularEstado(idReserva: number): Promise<'pendiente' | 'activo' | 'finalizado'> {
+
+    const reserva = await Reserva.findOrFail(idReserva)
+
+    // 2. Calculamos el estado basado en el tiempo actual
+    const hoy = DateTime.now().startOf('day')
+    const inicio = (reserva.fechaInicio instanceof DateTime
+      ? reserva.fechaInicio
+      : DateTime.fromJSDate(new Date(reserva.fechaInicio))
+    ).startOf('day')
+
+    const fin = (reserva.fechaFin instanceof DateTime
+      ? reserva.fechaFin
+      : DateTime.fromJSDate(new Date(reserva.fechaFin))
+    ).startOf('day')
+
+    let estadoCalculado: 'pendiente' | 'activo' | 'finalizado'
+    let idEstadoCalculado: number
+
+    // Determinamos el estado y su ID correspondiente en la BD
+    if (hoy < inicio) {
+      estadoCalculado = 'pendiente'
+      idEstadoCalculado = 1 // ID asignado a "Pendiente"
+    } else if (hoy > fin) {
+      estadoCalculado = 'finalizado'
+      idEstadoCalculado = 3 // ID asignado a "Finalizado"
+    } else {
+      estadoCalculado = 'activo'
+      idEstadoCalculado = 2 // ID asignado a "Activo / En curso"
+    }
+
+    // 3. Comparamos con el estado actual de la base de datos
+    if (reserva.idEstadoReserva !== idEstadoCalculado) {
+      // Si es distinto, modificamos el registro y guardamos
+      reserva.idEstadoReserva = idEstadoCalculado
+      await reserva.save()
+
+      console.log(`[Sincronizador] Reserva ID ${reserva.id} actualizada físicamente a: ${estadoCalculado}`)
+    } else {
+      // Si es igual, no hace nada (se salta el guardado)
+      console.log(`[Sincronizador] Reserva ID ${reserva.id} ya estaba sincronizada como: ${estadoCalculado}`)
+    }
+
+    // 4. Retornamos el estado de texto
+    return estadoCalculado
+  }
 }
