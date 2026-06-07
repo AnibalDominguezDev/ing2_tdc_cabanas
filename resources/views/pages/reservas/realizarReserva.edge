@@ -10,8 +10,8 @@
                 quietud comienza aquí.
             </p>
 
-            <form id="reservaForm" action="{{ route('reservas.store', { slug: cabana.slug }) }}" method="POST" novalidate
-                class="space-y-10" x-on:submit="beforeSubmit">
+            <form id="reservaForm" action="{{ route('reservas.store', { slug: cabana.slug }) }}" method="POST"
+                novalidate class="space-y-10" x-on:submit="beforeSubmit">
 
                 {{ csrfField() }}
                 <input type="hidden" name="cabanaId" value="{{ cabana.id }}">
@@ -62,7 +62,8 @@
 
                     <p x-show="dateError || erroresServidor.checkin || erroresServidor.checkout" x-cloak
                         class="mt-3 text-sm font-medium text-red-600"
-                        x-text="dateError || (erroresServidor.checkin && erroresServidor.checkin.join(', ')) || (erroresServidor.checkout && erroresServidor.checkout.join(', '))"></p>
+                        x-text="dateError || (erroresServidor.checkin && erroresServidor.checkin.join(', ')) || (erroresServidor.checkout && erroresServidor.checkout.join(', '))">
+                    </p>
 
                 </div>
 
@@ -96,7 +97,7 @@
                                     <label
                                         class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Nombre</label>
                                     <input type="text" name="nombre" placeholder="Ej. Julian"
-                                        value="{{ old('nombre') || '' }}"
+                                        value="{{session.get('usuario_nombre') || old('nombre') || '' }}"
                                         class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
                                         :class="erroresServidor.nombre ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
                                     <template x-if="erroresServidor.nombre">
@@ -108,7 +109,7 @@
                                     <label
                                         class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Apellido</label>
                                     <input type="text" name="apellido" placeholder="Ej. Moretti"
-                                        value="{{ old('apellido') || '' }}"
+                                        value="{{ session.get('usuario_apellido') || old('apellido') || '' }}"
                                         class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
                                         :class="erroresServidor.apellido ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
                                     <template x-if="erroresServidor.apellido">
@@ -120,7 +121,7 @@
                                     <label
                                         class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">DNI</label>
                                     <input type="text" name="documento" placeholder="Documento de identidad"
-                                        value="{{ old('documento') || '' }}"
+                                        value="{{ session.get('usuario_dni') || old('documento') || '' }}"
                                         class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
                                         :class="erroresServidor.documento ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
                                     <template x-if="erroresServidor.documento">
@@ -260,14 +261,7 @@
                             <span x-text="`${noches} noches x $${precioNoche}`"></span>
                             <span class="font-medium text-gray-900" x-text="`$${subtotal}`"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span>Gastos de limpieza</span>
-                            <span class="font-medium text-gray-900" x-text="`$${limpieza}`"></span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Tasa de servicio</span>
-                            <span class="font-medium text-gray-900" x-text="`$${servicio}`"></span>
-                        </div>
+
                     </div>
 
                     <div class="flex justify-between items-center mb-6">
@@ -289,232 +283,233 @@
 
 <script>
     document.addEventListener('alpine:init', () => {
-        const huespedesDesdeServidor = {{{ flashMessages.has('huespedes') ? JSON.stringify(flashMessages.get('huespedes')) : 'null' }}};
-        const serverErrors = {{{ flashMessages.has('errors') ? JSON.stringify(flashMessages.get('errors')) : '{}' }}};
-        const rangosOcupados = {{{ JSON.stringify(rangosOcupados || []) }}};
-        const oldCheckin = "{{ old('checkin') || '' }}";
-        const oldCheckout = "{{ old('checkout') || '' }}";
+        const huespedesDesdeServidor = {{{ flashMessages.has('huespedes') ? JSON.stringify(flashMessages.get('huespedes')) : 'null'
+    }}};
+    const serverErrors = {{{ flashMessages.has('errors') ? JSON.stringify(flashMessages.get('errors')) : '{}' }}};
+    const rangosOcupados = {{{ JSON.stringify(rangosOcupados || []) }}};
+    const oldCheckin = "{{ old('checkin') || '' }}";
+    const oldCheckout = "{{ old('checkout') || '' }}";
 
-        const oldhuespedes = huespedesDesdeServidor || [];
-        const huespedesRecuperados = oldhuespedes.map((acompanante) => ({
-            ...acompanante,
-            id: Date.now() + Math.random(),
+    const oldhuespedes = huespedesDesdeServidor || [];
+    const huespedesRecuperados = oldhuespedes.map((acompanante) => ({
+        ...acompanante,
+        id: Date.now() + Math.random(),
+    }));
+
+    Alpine.data('bookingCalculator', () => ({
+        erroresServidor: serverErrors,
+        rangosOcupados,
+        maxhuespedes: {{ cabana.capacidad - 1 || 0 }},
+        huespedes: huespedesRecuperados,
+        precioNoche: {{ cabana.precioPorNoche || 240 }},
+        limpieza: 0,
+        servicio: 0,
+        noches: 0,
+        checkinDate: null,
+        checkoutDate: null,
+        dateError: '',
+        fpCheckin: null,
+        fpCheckout: null,
+
+        get hayErrorhuespedes() {
+        return Object.keys(this.erroresServidor).some((llave) => llave.includes('huespedes'));
+    },
+
+        get subtotal() {
+        return this.noches * this.precioNoche;
+    },
+
+        get total() {
+        return this.noches > 0 ? this.subtotal + this.limpieza + this.servicio : 0;
+    },
+
+        get canSubmit() {
+        return this.noches > 0 && !this.dateError;
+    },
+
+        addAcompanante() {
+        if(this.huespedes.length < this.maxhuespedes) {
+        this.huespedes.push({ id: Date.now(), nombre: '', apellido: '', documento: '', telefono: '' });
+    }
+            },
+
+    removeAcompanante(id) {
+        this.huespedes = this.huespedes.filter((persona) => persona.id !== id);
+    },
+
+    init() {
+        const disabledRanges = this.rangosOcupados.map((rango) => ({
+            from: rango.inicio,
+            to: this.previousDate(rango.fin),
         }));
 
-        Alpine.data('bookingCalculator', () => ({
-            erroresServidor: serverErrors,
-            rangosOcupados,
-            maxhuespedes: {{ cabana.capacidad - 1 || 0 }},
-            huespedes: huespedesRecuperados,
-            precioNoche: {{ cabana.precioPorNoche || 240 }},
-            limpieza: 85,
-            servicio: 115,
-            noches: 0,
-            checkinDate: null,
-            checkoutDate: null,
-            dateError: '',
-            fpCheckin: null,
-            fpCheckout: null,
-
-            get hayErrorhuespedes() {
-                return Object.keys(this.erroresServidor).some((llave) => llave.includes('huespedes'));
-            },
-
-            get subtotal() {
-                return this.noches * this.precioNoche;
-            },
-
-            get total() {
-                return this.noches > 0 ? this.subtotal + this.limpieza + this.servicio : 0;
-            },
-
-            get canSubmit() {
-                return this.noches > 0 && !this.dateError;
-            },
-
-            addAcompanante() {
-                if (this.huespedes.length < this.maxhuespedes) {
-                    this.huespedes.push({ id: Date.now(), nombre: '', apellido: '', documento: '', telefono: '' });
-                }
-            },
-
-            removeAcompanante(id) {
-                this.huespedes = this.huespedes.filter((persona) => persona.id !== id);
-            },
-
-            init() {
-                const disabledRanges = this.rangosOcupados.map((rango) => ({
-                    from: rango.inicio,
-                    to: this.previousDate(rango.fin),
-                }));
-
-                this.fpCheckout = flatpickr(this.$refs.checkout, {
-                    minDate: 'today',
-                    disable: disabledRanges,
-                    locale: 'es',
-                    dateFormat: 'Y-m-d',
-                    altInput: true,
-                    altFormat: 'd / m / Y',
-                    onDayCreate: (_selectedDates, _dateStr, _instance, dayElem) => this.paintDay(dayElem),
-                    onChange: (selectedDates) => {
-                        this.checkoutDate = selectedDates[0] || null;
-                        this.calculateNights();
-                    },
-                });
-
-                this.fpCheckout.input.disabled = false;
-                if (this.fpCheckout.altInput) {
-                    this.fpCheckout.altInput.disabled = true;
-                    this.fpCheckout.altInput.placeholder = 'Primero elige check-in';
-                }
-
-                this.fpCheckin = flatpickr(this.$refs.checkin, {
-                    minDate: 'today',
-                    disable: disabledRanges,
-                    locale: 'es',
-                    dateFormat: 'Y-m-d',
-                    altInput: true,
-                    altFormat: 'd / m / Y',
-                    onDayCreate: (_selectedDates, _dateStr, _instance, dayElem) => this.paintDay(dayElem),
-                    onChange: (selectedDates) => this.handleCheckinChange(selectedDates[0] || null),
-                });
-
-                if (oldCheckin) {
-                    this.fpCheckin.setDate(oldCheckin, false);
-                    this.handleCheckinChange(this.parseDate(oldCheckin), false);
-                }
-
-                if (oldCheckout) {
-                    this.fpCheckout.setDate(oldCheckout, false);
-                    this.checkoutDate = this.parseDate(oldCheckout);
-                    this.calculateNights();
-                }
-            },
-
-            handleCheckinChange(date, openCheckout = true) {
-                this.checkinDate = date;
-                this.checkoutDate = null;
-                this.dateError = '';
-                this.noches = 0;
-                this.fpCheckout.clear();
-
-                if (!date) {
-                    this.setCheckoutEnabled(false);
-                    return;
-                }
-
-                const minCheckout = this.addDays(date, 1);
-                const nextOccupiedStart = this.nextOccupiedStartAfter(date);
-
-                this.fpCheckout.set('minDate', minCheckout);
-                this.fpCheckout.set('maxDate', nextOccupiedStart || null);
-                this.setCheckoutEnabled(true);
-
-                if (openCheckout) {
-                    setTimeout(() => this.fpCheckout.open(), 100);
-                }
-            },
-
-            setCheckoutEnabled(enabled) {
-                this.fpCheckout.input.disabled = false;
-                if (this.fpCheckout.altInput) {
-                    this.fpCheckout.altInput.disabled = !enabled;
-                    this.fpCheckout.altInput.placeholder = enabled ? 'Selecciona una fecha' : 'Primero elige check-in';
-                }
-            },
-
-            calculateNights() {
-                this.dateError = '';
-
-                if (!this.checkinDate || !this.checkoutDate) {
-                    this.noches = 0;
-                    return;
-                }
-
-                if (this.checkoutDate <= this.checkinDate) {
-                    this.noches = 0;
-                    this.dateError = 'La fecha de salida debe ser posterior a la de entrada.';
-                    return;
-                }
-
-                if (this.hasBlockedNight(this.checkinDate, this.checkoutDate)) {
-                    this.noches = 0;
-                    this.dateError = 'Ese rango contiene fechas ya reservadas.';
-                    return;
-                }
-
-                const diffTime = this.checkoutDate - this.checkinDate;
-                this.noches = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            },
-
-            beforeSubmit(event) {
+        this.fpCheckout = flatpickr(this.$refs.checkout, {
+            minDate: 'today',
+            disable: disabledRanges,
+            locale: 'es',
+            dateFormat: 'Y-m-d',
+            altInput: true,
+            altFormat: 'd / m / Y',
+            onDayCreate: (_selectedDates, _dateStr, _instance, dayElem) => this.paintDay(dayElem),
+            onChange: (selectedDates) => {
+                this.checkoutDate = selectedDates[0] || null;
                 this.calculateNights();
-
-                if (!this.canSubmit) {
-                    event.preventDefault();
-                    this.dateError = this.dateError || 'Selecciona fechas disponibles para confirmar la reserva.';
-                }
             },
+        });
 
-            hasBlockedNight(checkin, checkout) {
-                return this.rangosOcupados.some((rango) => {
-                    const inicio = this.parseDate(rango.inicio);
-                    const fin = this.parseDate(rango.fin);
+        this.fpCheckout.input.disabled = false;
+        if (this.fpCheckout.altInput) {
+            this.fpCheckout.altInput.disabled = true;
+            this.fpCheckout.altInput.placeholder = 'Primero elige check-in';
+        }
 
-                    return inicio < checkout && fin > checkin;
-                });
-            },
+        this.fpCheckin = flatpickr(this.$refs.checkin, {
+            minDate: 'today',
+            disable: disabledRanges,
+            locale: 'es',
+            dateFormat: 'Y-m-d',
+            altInput: true,
+            altFormat: 'd / m / Y',
+            onDayCreate: (_selectedDates, _dateStr, _instance, dayElem) => this.paintDay(dayElem),
+            onChange: (selectedDates) => this.handleCheckinChange(selectedDates[0] || null),
+        });
 
-            nextOccupiedStartAfter(date) {
-                const current = this.formatDate(date);
-                const next = this.rangosOcupados
-                    .map((rango) => rango.inicio)
-                    .filter((inicio) => inicio > current)
-                    .sort()[0];
+        if (oldCheckin) {
+            this.fpCheckin.setDate(oldCheckin, false);
+            this.handleCheckinChange(this.parseDate(oldCheckin), false);
+        }
 
-                return next || null;
-            },
+        if (oldCheckout) {
+            this.fpCheckout.setDate(oldCheckout, false);
+            this.checkoutDate = this.parseDate(oldCheckout);
+            this.calculateNights();
+        }
+    },
 
-            paintDay(dayElem) {
-                const date = dayElem.dateObj;
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+    handleCheckinChange(date, openCheckout = true) {
+        this.checkinDate = date;
+        this.checkoutDate = null;
+        this.dateError = '';
+        this.noches = 0;
+        this.fpCheckout.clear();
 
-                if (date < today) {
-                    return;
-                }
+        if (!date) {
+            this.setCheckoutEnabled(false);
+            return;
+        }
 
-                dayElem.classList.add(this.isOccupiedDay(date) ? 'reserva-dia-ocupado' : 'reserva-dia-disponible');
-            },
+        const minCheckout = this.addDays(date, 1);
+        const nextOccupiedStart = this.nextOccupiedStartAfter(date);
 
-            isOccupiedDay(date) {
-                return this.rangosOcupados.some((rango) => {
-                    const inicio = this.parseDate(rango.inicio);
-                    const fin = this.parseDate(rango.fin);
+        this.fpCheckout.set('minDate', minCheckout);
+        this.fpCheckout.set('maxDate', nextOccupiedStart || null);
+        this.setCheckoutEnabled(true);
 
-                    return date >= inicio && date < fin;
-                });
-            },
+        if (openCheckout) {
+            setTimeout(() => this.fpCheckout.open(), 100);
+        }
+    },
 
-            parseDate(value) {
-                return flatpickr.parseDate(value, 'Y-m-d');
-            },
+    setCheckoutEnabled(enabled) {
+        this.fpCheckout.input.disabled = false;
+        if (this.fpCheckout.altInput) {
+            this.fpCheckout.altInput.disabled = !enabled;
+            this.fpCheckout.altInput.placeholder = enabled ? 'Selecciona una fecha' : 'Primero elige check-in';
+        }
+    },
 
-            formatDate(date) {
-                return flatpickr.formatDate(date, 'Y-m-d');
-            },
+    calculateNights() {
+        this.dateError = '';
 
-            addDays(date, days) {
-                const next = new Date(date);
-                next.setDate(next.getDate() + days);
-                return next;
-            },
+        if (!this.checkinDate || !this.checkoutDate) {
+            this.noches = 0;
+            return;
+        }
 
-            previousDate(value) {
-                const date = this.parseDate(value);
-                date.setDate(date.getDate() - 1);
-                return this.formatDate(date);
-            },
+        if (this.checkoutDate <= this.checkinDate) {
+            this.noches = 0;
+            this.dateError = 'La fecha de salida debe ser posterior a la de entrada.';
+            return;
+        }
+
+        if (this.hasBlockedNight(this.checkinDate, this.checkoutDate)) {
+            this.noches = 0;
+            this.dateError = 'Ese rango contiene fechas ya reservadas.';
+            return;
+        }
+
+        const diffTime = this.checkoutDate - this.checkinDate;
+        this.noches = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    },
+
+    beforeSubmit(event) {
+        this.calculateNights();
+
+        if (!this.canSubmit) {
+            event.preventDefault();
+            this.dateError = this.dateError || 'Selecciona fechas disponibles para confirmar la reserva.';
+        }
+    },
+
+    hasBlockedNight(checkin, checkout) {
+        return this.rangosOcupados.some((rango) => {
+            const inicio = this.parseDate(rango.inicio);
+            const fin = this.parseDate(rango.fin);
+
+            return inicio < checkout && fin > checkin;
+        });
+    },
+
+    nextOccupiedStartAfter(date) {
+        const current = this.formatDate(date);
+        const next = this.rangosOcupados
+            .map((rango) => rango.inicio)
+            .filter((inicio) => inicio > current)
+            .sort()[0];
+
+        return next || null;
+    },
+
+    paintDay(dayElem) {
+        const date = dayElem.dateObj;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (date < today) {
+            return;
+        }
+
+        dayElem.classList.add(this.isOccupiedDay(date) ? 'reserva-dia-ocupado' : 'reserva-dia-disponible');
+    },
+
+    isOccupiedDay(date) {
+        return this.rangosOcupados.some((rango) => {
+            const inicio = this.parseDate(rango.inicio);
+            const fin = this.parseDate(rango.fin);
+
+            return date >= inicio && date < fin;
+        });
+    },
+
+    parseDate(value) {
+        return flatpickr.parseDate(value, 'Y-m-d');
+    },
+
+    formatDate(date) {
+        return flatpickr.formatDate(date, 'Y-m-d');
+    },
+
+    addDays(date, days) {
+        const next = new Date(date);
+        next.setDate(next.getDate() + days);
+        return next;
+    },
+
+    previousDate(value) {
+        const date = this.parseDate(value);
+        date.setDate(date.getDate() - 1);
+        return this.formatDate(date);
+    },
         }));
     });
 </script>

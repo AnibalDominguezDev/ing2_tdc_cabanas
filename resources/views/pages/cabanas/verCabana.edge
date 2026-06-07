@@ -187,15 +187,23 @@
                 </div>
 
 
-
-                <button
-                    class="w-full py-3.5 bg-[#1B3B32] cursor-pointer hover:bg-[#122822] text-white text-sm font-bold tracking-wider uppercase rounded-lg transition-colors">
+                @if(cabana.idEstado === 1)
+                <a href="{{ urlFor('reservas.store', { slug: cabana.slug }) }}"
+                    class="w-full block text-center py-3.5 bg-[#1B3B32] hover:bg-[#122822] text-white text-sm font-bold tracking-wider uppercase rounded-lg transition-colors">
                     Reservar Ahora
-                    </a>
+                </a>
+                @else
+                <button disabled
+                    class="w-full block text-center py-3.5 bg-[gray] text-white text-sm font-bold tracking-wider uppercase rounded-lg transition-colors">
+                    No disponible
+                </button>
+                @endif
 
-                    <p class="text-center text-xs text-gray-400 mt-4">
-                        Aún no se te cobrará.
-                    </p>
+
+
+                <p class="text-center text-xs text-gray-400 mt-4">
+                    Aún no se te cobrará.
+                </p>
 
 
 
