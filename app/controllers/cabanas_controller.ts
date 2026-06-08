@@ -2,6 +2,7 @@ import { type HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { validadorCabana } from '#validators/cabana'
 import { CabanaService } from '#services/cabana_service'
+import Servicio from '#models/servicio'
 @inject()
 export default class CabanasController {
 
@@ -9,7 +10,7 @@ export default class CabanasController {
   constructor(private cabanaService: CabanaService) { }
 
   async crear({ view }: HttpContext) {
-    const servicios = await this.cabanaService.obtenerServicios()
+    const servicios = await Servicio.listarServicios()
     return view.render('pages/cabanas/altaCabana', { servicios })
   }
 
@@ -38,7 +39,7 @@ export default class CabanasController {
   async editar({ params, view }: HttpContext) {
 
     const cabana = await this.cabanaService.obtenerPorSlug(params.slug)
-    const servicios = await this.cabanaService.obtenerServicios()
+    const servicios = await Servicio.listarServicios()
 
     // Mapeo para los checkboxes en la vista
     const serviciosActuales = cabana.servicios.map((servicio) => servicio.id)

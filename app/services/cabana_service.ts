@@ -1,13 +1,10 @@
 import Cabana from '#models/cabana'
-import Servicio from '#models/servicio'
 import stringHelpers from '@adonisjs/core/helpers/string'
 import type { MultipartFile } from '@adonisjs/core/bodyparser'
 import { EstadoCabanaFactory } from './CabanaEstados/EstadoFactory.ts'
 
 export class CabanaService {
-  async obtenerServicios() {
-    return await Servicio.all()
-  }
+
 
   async obtenerTodas() {
     return await Cabana.all()

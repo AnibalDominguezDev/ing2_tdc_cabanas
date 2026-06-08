@@ -9,4 +9,8 @@ export default class Servicio extends ServicioSchema {
 
     @column({ columnName: 'descripcion' })
     declare nombre: string
+
+    static async listarServicios() {
+        return await this.all()
+    }
 }
