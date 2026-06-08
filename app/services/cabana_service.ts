@@ -35,18 +35,18 @@ export class CabanaService {
     return await Cabana.query().where('slug', slug).preload('servicios').firstOrFail()
   }
 
-  async crear(datos: any, servicios: number[], imgFile: MultipartFile | null) {
+  async agregarCabana(datosCabana: any, servicios: number[], imgFile: MultipartFile | null) {
     const cabana = await Cabana.create({
-      nombre: datos.nombre,
-      descripcion: datos.descripcion,
-      capacidad: datos.capacidad,
-      habitaciones: datos.habitaciones,
-      precioPorNoche: datos.precio_por_noche,
+      nombre: datosCabana.nombre,
+      descripcion: datosCabana.descripcion,
+      capacidad: datosCabana.capacidad,
+      habitaciones: datosCabana.habitaciones,
+      precioPorNoche: datosCabana.precio_por_noche,
       idEstado: 1, // Por defecto al crear
     })
 
     if (imgFile) {
-      const fileName = `${datos.nombre}.${imgFile.extname}`
+      const fileName = `${datosCabana.nombre}.${imgFile.extname}`
       await imgFile.moveToDisk(`cabanas_img/${fileName}`)
       cabana.imgUrl = `cabanas_img/${fileName}`
       await cabana.save()

@@ -14,7 +14,7 @@ export default class CabanasController {
   }
 
   async agregarCabana({ request, response, session }: HttpContext) {
-    const datos = await request.validateUsing(validadorCabana)
+    const datosCabana = await request.validateUsing(validadorCabana)
     const servicios = request.input('servicios[]', [])
     const img = request.file('imagen', {
       size: '20mb',
@@ -23,7 +23,7 @@ export default class CabanasController {
 
     try {
       // Delegamos la lógica compleja al servicio
-      await this.cabanaService.crear(datos, servicios, img)
+      await this.cabanaService.agregarCabana(datosCabana, servicios, img)
 
       session.flash('success', 'Cabaña guardada correctamente')
       return response.redirect().toRoute('gestion')

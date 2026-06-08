@@ -43,10 +43,10 @@ test.group('CabanaService', (group) => {
     // 1. Verificamos que todas las que trajo (viejas y nuevas) tengan estado 1
     assert.isTrue(activas.every(c => c.idEstado === 1))
 
-    // 2. Aislamos específicamente la cabaña que creamos en ESTE test
+    // 2. Aislamos específicamente la cabaña que creamos para el test
     const cabanaDelTest = activas.find(c => c.id === cabanaActiva.id)
 
-    // 3. Verificamos que AdonisJS la haya traído y que el preload funcionó
+    // 3. Verificamos que el preload funcionó
     assert.isDefined(cabanaDelTest, 'La cabaña creada no apareció en la lista de activas')
     assert.isDefined(cabanaDelTest!.servicios, 'Los servicios no se cargaron con preload')
 
@@ -69,7 +69,7 @@ test.group('CabanaService', (group) => {
     }
 
     // Pasamos null al archivo de imagen para aislar la prueba de la BD
-    const cabana = await cabanaService.crear(datosCabana, [servicio.id], null)
+    const cabana = await cabanaService.agregarCabana(datosCabana, [servicio.id], null)
 
     assert.isTrue(cabana.$isPersisted)
     assert.equal(cabana.nombre, 'Nueva Cabaña')
