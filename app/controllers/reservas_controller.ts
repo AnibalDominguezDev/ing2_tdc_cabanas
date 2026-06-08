@@ -66,7 +66,7 @@ export default class ReservasController {
         }
 
         const cabana = await this.cabana.obtenerPorSlug(params.slug)
-        const rangosOcupados = await this.reservaService.obtenerRangosOcupados(cabana.id)
+        const rangosOcupados = await this.cabana.obtenerRangosOcupados(cabana.id)
 
 
         return view.render('pages/reservas/realizarReserva', { cabana, rangosOcupados })
@@ -113,13 +113,13 @@ export default class ReservasController {
                 usuarioId: session.get('usuario_id'),
             }
 
-            await this.reservaService.NuevaReserva(datosReserva)
+            await this.reservaService.registrarReserva(datosReserva)
 
             // console.log('--- NUEVA RESERVA RECIBIDA ---')
             // console.log('================Datos recibidos===================')
             // console.log({ datosRecibidos })
-            console.log('================Datos validos===================')
-            console.dir(datosReserva, { depth: null })
+            //console.log('================Datos validos===================')
+            //console.dir(datosReserva, { depth: null })
 
             session.flash('success', 'Reserva realizada correctamente')
             return response.redirect().toRoute('misReservas')

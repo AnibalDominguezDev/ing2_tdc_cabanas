@@ -1,7 +1,9 @@
 import Cabana from '#models/cabana'
+import db from '@adonisjs/lucid/services/db'
 import stringHelpers from '@adonisjs/core/helpers/string'
 import type { MultipartFile } from '@adonisjs/core/bodyparser'
 import { EstadoCabanaFactory } from './CabanaEstados/EstadoFactory.ts'
+import { formateadorFecha } from '../utils/formateadorFecha.ts'
 
 export class CabanaService {
 
@@ -84,6 +86,32 @@ export class CabanaService {
   async obtenerEstadoActual(idCabana: number) {
     const cabana = await Cabana.findOrFail(idCabana)
     return EstadoCabanaFactory.fabricar(cabana.idEstado)
+  }
+
+  async obtenerRangosOcupados(cabanaId: number) {
+    const reservas = await db
+      .from('reservas')
+      .select('fecha_inicio as fechaInicio', 'fecha_fin as fechaFin')
+      .where('id_cabana', cabanaId)
+      .whereIn('id_estado_reserva', [1, 2])
+      .orderBy('fecha_inicio', 'asc')
+
+    return reservas.map((reserva) => ({
+      inicio: formateadorFecha.formatearFecha(reserva.fechaInicio),
+      fin: formateadorFecha.formatearFecha(reserva.fechaFin),
+    }))
+  }
+
+  async estaDisponible(cabanaId: number, checkin: string, checkout: string) {
+    const reservaConflictiva = await db
+      .from('reservas')
+      .where('id_cabana', cabanaId)
+      .whereIn('id_estado_reserva', [1, 2])
+      .where('fecha_inicio', '<', checkout)
+      .where('fecha_fin', '>', checkin)
+      .first()
+
+    return !reservaConflictiva
   }
 
   async reservarCabana(idCabana: number) {
