@@ -115,7 +115,7 @@ export class ReservaService {
     } catch (error: any) {
       // Si algo falla (ej. DNI duplicado de forma incorrecta, fallo de BD), revertimos
       await trx.rollback()
-      throw error.message
+      throw error
     }
   }
 
