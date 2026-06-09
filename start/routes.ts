@@ -31,6 +31,7 @@ router
     router.get('gestion/reactivar/:id', [controllers.Cabanas, 'reactivar']).as('cabana.reactivar')
     router.get('admin/reservas', [controllers.Reservas, 'listarTodasAdmin']).as('admin.reservas')
     router.get('admin/reservas/:id', [controllers.Reservas, 'detalleReservaAdmin']).as('admin.detalleReserva')
+    router.get('admin/dashboard', [controllers.Dashboard, 'index']).as('admin.index')
   })
   .use(middleware.admin())
 
