@@ -37,87 +37,68 @@
 
     <div class="relative flex items-center">
 
-      <button
-        id="profileButton"
-        type="button"
-        class="text-primary hover:opacity-80 transition-opacity"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <button id="profileButton" type="button" class="text-primary hover:opacity-80 transition-opacity">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
           stroke-width="1.5">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
+          <path stroke-linecap="round" stroke-linejoin="round"
             d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       </button>
 
-      <div
-        id="profileDropdown"
-        class="hidden absolute right-0 top-12 z-[9999] w-72 rounded-2xl border border-[#8B5E3C]/15 bg-[#F9F5F0] p-5 shadow-2xl"
-      >
+      <div id="profileDropdown"
+        class="hidden absolute right-0 top-12 z-9999 w-72 rounded-2xl border border-secondary/15 bg-neutral-bg p-5 shadow-2xl">
 
         @if(session.get('usuario_id'))
 
-          <div class="space-y-2 text-sm text-[#2D4739]">
+        <div class="space-y-2 text-sm text-primary">
 
-            <p>
-              <strong>Nombre:</strong>
-              {{ session.get('usuario_nombre') }}
-            </p>
+          <p>
+            <strong>Nombre:</strong>
+            {{ session.get('usuario_nombre') }}
+          </p>
 
-            <p>
-              <strong>Apellido:</strong>
-              {{ session.get('usuario_apellido') }}
-            </p>
+          <p>
+            <strong>Apellido:</strong>
+            {{ session.get('usuario_apellido') }}
+          </p>
 
-            <p class="break-all">
-              <strong>Correo:</strong>
-              {{ session.get('usuario_email') }}
-            </p>
+          <p class="break-all">
+            <strong>Correo:</strong>
+            {{ session.get('usuario_email') }}
+          </p>
 
-            <p>
-              <strong>Rol:</strong>
-              {{ session.get('usuario_rol_nombre') }}
-            </p>
+          <p>
+            <strong>Rol:</strong>
+            {{ session.get('usuario_rol_nombre') }}
+          </p>
 
-          </div>
+        </div>
 
-          <a
-            href="/mis-reservas"
-            class="mt-4 block w-full rounded-xl bg-[#2D4739] px-4 py-2 text-center text-white transition hover:bg-[#24392d]"
-          >
-            Mis Reservas
-          </a>
+        <a href="/mis-reservas"
+          class="mt-4 block w-full rounded-xl bg-primary px-4 py-2 text-center text-white transition hover:bg-[#24392d]">
+          Mis Reservas
+        </a>
 
-          <form action="/logout" method="POST" class="mt-4">
-            {{ csrfField() }}
+        <form action="/logout" method="POST" class="mt-4">
+          {{ csrfField() }}
 
-            <button
-              type="submit"
-              class="w-full rounded-xl bg-red-600 px-4 py-2 text-white transition hover:bg-red-700"
-            >
-              Cerrar sesión
-            </button>
-          </form>
+          <button type="submit" class="w-full rounded-xl bg-red-600 px-4 py-2 text-white transition hover:bg-red-700">
+            Cerrar sesión
+          </button>
+        </form>
 
         @else
 
-          <div class="text-center">
-            <p class="mb-4 text-sm text-[#2D4739]">
-              No has iniciado sesión
-            </p>
+        <div class="text-center">
+          <p class="mb-4 text-sm text-primary">
+            No has iniciado sesión
+          </p>
 
-            <a
-              href="/login"
-              class="block w-full rounded-xl bg-[#2D4739] px-4 py-2 text-white transition hover:bg-[#24392d]"
-            >
-              Iniciar sesión
-            </a>
-          </div>
+          <a href="/login"
+            class="block w-full rounded-xl bg-primary px-4 py-2 text-white transition hover:bg-[#24392d]">
+            Iniciar sesión
+          </a>
+        </div>
 
         @endif
 
@@ -129,21 +110,21 @@
 </header>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const button = document.getElementById('profileButton')
-  const dropdown = document.getElementById('profileDropdown')
+  document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('profileButton')
+    const dropdown = document.getElementById('profileDropdown')
 
-  button?.addEventListener('click', (event) => {
-    event.stopPropagation()
-    dropdown?.classList.toggle('hidden')
-  })
+    button?.addEventListener('click', (event) => {
+      event.stopPropagation()
+      dropdown?.classList.toggle('hidden')
+    })
 
-  document.addEventListener('click', () => {
-    dropdown?.classList.add('hidden')
-  })
+    document.addEventListener('click', () => {
+      dropdown?.classList.add('hidden')
+    })
 
-  dropdown?.addEventListener('click', (event) => {
-    event.stopPropagation()
+    dropdown?.addEventListener('click', (event) => {
+      event.stopPropagation()
+    })
   })
-})
 </script>
