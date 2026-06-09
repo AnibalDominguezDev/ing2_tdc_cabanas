@@ -1,79 +1,53 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Usuario from '#models/usuario'
-import hash from '@adonisjs/core/services/hash'
 import { loginValidator } from '#validators/login'
+import { inject } from '@adonisjs/core'
+import { UsuarioService } from '#services/usuario_service'
 
+@inject()
 export default class LoginController {
+  constructor(private usuarioService: UsuarioService) { }
+
   async show({ view }: HttpContext) {
     return view.render('auth/login')
   }
 
   async store({ request, response, session }: HttpContext) {
     try {
+      // 1. Validar request
       const datos = await request.validateUsing(loginValidator)
 
-      const usuario = await Usuario.findBy('email', datos.email)
+      // 2. Verificar credenciales en el servicio
+      const usuario = await this.usuarioService.verificarCredenciales(datos.email, datos.contrasena)
 
-      if (!usuario) {
-        session.flash('errors', ['Correo o contraseña incorrectos'])
-        session.flashAll()
-        return response.redirect().back()
+      // 3. Guardar en sesión usando el getter del modelo
+      const payload = usuario.datosUsuario
+      for (const [key, value] of Object.entries(payload)) {
+        session.put(key, value)
       }
 
-      const passwordCorrecta = await hash.verify(usuario.contrasena, datos.contrasena)
-
-      if (!passwordCorrecta) {
-        session.flash('errors', ['Correo o contraseña incorrectos'])
-        session.flashAll()
-        return response.redirect().back()
-      }
-
-      session.put('usuario_id', usuario.idUsuario)
-      session.put('usuario_nombre', usuario.nombre)
-      session.put('usuario_rol', usuario.idRol)
-      session.put('usuario_apellido', usuario.apellido)
-      session.put('usuario_email', usuario.email)
-      session.put('usuario_dni', usuario.dni)
-      session.put(
-        'usuario_rol_nombre',
-        usuario.idRol === 1 ? 'Cliente' : 'Administrador'
-      )
-
+      // 4. Redirigir según el rol
       if (usuario.idRol === 2) {
         return response.redirect().toRoute('gestion')
       }
 
       return response.redirect('/')
-    } catch (error: unknown) {
-      if (
-        typeof error === 'object' &&
-        error !== null &&
-        'messages' in error
-      ) {
-        const errs = (error as any).messages
 
-        session.flash(
-          'errors',
-          errs.map((e: any) => e.message)
-        )
-      } else {
-        session.flash('errors', ['Error inesperado'])
-      }
+    } catch (error: any) {
+      // Manejo de errores simplificado
+      const mensajes = error.messages
+        ? error.messages.map((e: any) => e.message)
+        : [error.message || 'Error inesperado']
 
+      session.flash('errors', mensajes)
       session.flashAll()
+
       return response.redirect().back()
     }
   }
 
   async logout({ response, session }: HttpContext) {
-    session.forget('usuario_id')
-    session.forget('usuario_nombre')
-    session.forget('usuario_rol')
-    session.forget('usuario_apellido')
-    session.forget('usuario_email')
-    session.forget('usuario_rol_nombre')
-
-
+    // Es más seguro limpiar toda la sesión en lugar de llave por llave
+    session.clear()
     return response.redirect('/login')
   }
 }
