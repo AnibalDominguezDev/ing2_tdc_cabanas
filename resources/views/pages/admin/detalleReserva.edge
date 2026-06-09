@@ -18,7 +18,7 @@
     </div>
     <div class="mb-8">
         <a href="{{urlFor('admin.reservas')}}"
-            class="text-sm flex items-center font-semibold text-[#8B5E3C] transition hover:text-[#2D4739]">
+            class="text-sm flex items-center font-semibold text-secondary transition hover:text-primary">
             <svg class="inline w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -32,7 +32,7 @@
 </header>
 <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
     <section>
-        <div class="overflow-hidden rounded-2xl border border-[#8B5E3C]/10 bg-[#F9F5F0] shadow-sm">
+        <div class="overflow-hidden rounded-2xl border border-secondary/10 bg-neutral-bg shadow-sm">
             <img src="{{ reserva.cabana.imgUrl ? await driveUrl(reserva.cabana.imgUrl) : 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&h=800&fit=crop' }}"
                 alt="{{ reserva.cabana.nombre }}" class="h-80 w-full object-cover">
 
@@ -43,7 +43,7 @@
                     </h1>
 
                     <span
-                        class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#2D4739]">
+                        class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
                         {{ reserva.estado.estado }}
                     </span>
                 </div>
