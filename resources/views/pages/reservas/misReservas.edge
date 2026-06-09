@@ -1,10 +1,10 @@
 @layout()
 
-<div class="min-h-screen bg-[#FFFEFC] px-4 py-12 text-[#2D4739] sm:px-6 lg:px-8">
+<div class="min-h-screen bg-[#FFFEFC] px-4 py-12 text-primary sm:px-6 lg:px-8">
   <div class="mx-auto max-w-6xl">
     <div class="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
       <div>
-        <p class="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#8B5E3C]">
+        <p class="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-secondary">
           Panel de usuario
         </p>
 
@@ -12,13 +12,13 @@
           Mis Reservas
         </h1>
 
-        <p class="mt-4 max-w-2xl text-sm leading-6 text-[#2D4739]/70 md:text-base">
+        <p class="mt-4 max-w-2xl text-sm leading-6 text-primary/70 md:text-base">
           Consulta tus estadias reservadas y entra al detalle cuando necesites mas informacion.
         </p>
       </div>
 
       <a href="/cabanas"
-        class="inline-flex rounded-xl border border-[#8B5E3C]/25 px-5 py-3 text-sm font-semibold text-[#8B5E3C] transition hover:bg-[#8B5E3C]/10">
+        class="inline-flex rounded-xl border border-secondary/25 px-5 py-3 text-sm font-semibold text-secondary transition hover:bg-secondary/10">
         Ver cabanas
       </a>
     </div>
@@ -26,7 +26,7 @@
     @if(reservas.length > 0)
     <div class="grid gap-5">
       @each(reserva in reservas)
-      <article class="rounded-2xl border border-[#8B5E3C]/10 bg-[#F9F5F0] p-6 shadow-sm">
+      <article class="rounded-2xl border border-secondary/10 bg-neutral-bg p-6 shadow-sm">
         <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
             <div class="mb-3 flex flex-wrap items-center gap-3">
@@ -35,31 +35,31 @@
               </h2>
 
               <span
-                class="rounded-full bg-[#2D4739]/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#2D4739]">
+                class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
                 {{ reserva.estado.estado }}
               </span>
             </div>
 
-            <div class="grid gap-3 text-sm text-[#2D4739]/75 sm:grid-cols-3">
+            <div class="grid gap-3 text-sm text-primary/75 sm:grid-cols-3">
               <p>
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-[#8B5E3C]">Creada</span>
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-secondary">Creada</span>
                 {{ reserva.createdAt.toFormat('dd/MM/yyyy') }}
               </p>
 
               <p>
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-[#8B5E3C]">Entrada</span>
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-secondary">Entrada</span>
                 {{ reserva.fechaInicio.toFormat('dd/MM/yyyy') }}
               </p>
 
               <p>
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-[#8B5E3C]">Salida</span>
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-secondary">Salida</span>
                 {{ reserva.fechaFin.toFormat('dd/MM/yyyy') }}
               </p>
             </div>
           </div>
 
           <a href="/mis-reservas/{{ reserva.id }}"
-            class="inline-flex justify-center rounded-xl bg-[#2D4739] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#24392d]">
+            class="inline-flex justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#24392d]">
             Ver detalles
           </a>
         </div>
@@ -67,20 +67,20 @@
       @endeach
     </div>
     @else
-    <section class="rounded-2xl border border-[#8B5E3C]/10 bg-[#F9F5F0] p-8 shadow-sm">
+    <section class="rounded-2xl border border-secondary/10 bg-neutral-bg p-8 shadow-sm">
       <div class="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         <div>
           <h2 class="text-2xl font-serif text-[#1B3B32]">
             Todavia no hay reservas para mostrar
           </h2>
 
-          <p class="mt-3 max-w-xl text-sm leading-6 text-[#2D4739]/70">
+          <p class="mt-3 max-w-xl text-sm leading-6 text-primary/70">
             Cuando realices una reserva, va a aparecer aca con sus fechas y el acceso al detalle.
           </p>
         </div>
 
         <a href="/cabanas"
-          class="rounded-xl bg-[#2D4739] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#24392d]">
+          class="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#24392d]">
           Buscar cabanas
         </a>
       </div>
