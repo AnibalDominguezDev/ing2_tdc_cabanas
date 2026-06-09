@@ -22,7 +22,7 @@ test.group('ReservaService', (group) => {
     return () => db.rollbackGlobalTransaction()
   })
 
-  // --- TESTS DE CREACIÓN Y OVERBOOKING ---
+  // --- TESTS DE CREACIÓN  ---
 
   test('registrarReserva - debe crear una reserva exitosa con titular y huéspedes', async ({ assert }) => {
     // 1. Preparamos una cabaña de prueba
