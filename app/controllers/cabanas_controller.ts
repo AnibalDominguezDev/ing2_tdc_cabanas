@@ -1,6 +1,6 @@
 import { type HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
-import { validadorCabana } from '#validators/cabana'
+import { mensajesCabana, validadorCabana } from '#validators/cabana'
 import { CabanaService } from '#services/cabana_service'
 import Servicio from '#models/servicio'
 @inject()
@@ -15,7 +15,9 @@ export default class CabanasController {
   }
 
   async agregarCabana({ request, response, session }: HttpContext) {
-    const datosCabana = await request.validateUsing(validadorCabana)
+    const datosCabana = await request.validateUsing(validadorCabana, {
+      messagesProvider: mensajesCabana
+    })
     const servicios = request.input('servicios[]', [])
     const img = request.file('imagen', {
       size: '20mb',
@@ -23,10 +25,10 @@ export default class CabanasController {
     })
 
     try {
-      // Delegamos la lógica compleja al servicio
+
       await this.cabanaService.agregarCabana(datosCabana, servicios, img)
 
-      session.flash('success', 'Cabaña guardada correctamente')
+      session.flash('success', 'Cabaña ingresada correctamente')
       return response.redirect().toRoute('gestion')
 
     } catch (error) {
@@ -57,7 +59,9 @@ export default class CabanasController {
     try {
       // Es importante validar antes de enviar datos al servicio
       const nuevosDatos = await request.validateUsing(validadorCabana, {
-        meta: { cabanaId: id }
+        meta: { cabanaId: id },
+        messagesProvider: mensajesCabana
+
       })
       const serviciosInput = request.input('servicios[]', [])
 
