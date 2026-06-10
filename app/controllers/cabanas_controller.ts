@@ -109,11 +109,11 @@ export default class CabanasController {
       const estadoActual = await this.cabanaService.obtenerEstadoActual(cabanaId)
 
       if (estadoActual.nombre === 'Mantenimiento') {
-        await this.cabanaService.liberarCabana(cabanaId)
+        await this.cabanaService.liberar(cabanaId)
         session.flash('success', 'La cabaña fue reactivada')
 
       } else {
-        await this.cabanaService.establecerMantenimiento(cabanaId)
+        await this.cabanaService.ponerEnMantenimiento(cabanaId)
         session.flash('success', 'La cabaña ahora esta en mantenimiento')
       }
       return response.redirect().back()
@@ -130,7 +130,7 @@ export default class CabanasController {
 
       const cabanaId = params.id
 
-      await this.cabanaService.liberarCabana(cabanaId)
+      await this.cabanaService.liberar(cabanaId)
       session.flash('success', 'La cabaña fue reactivada')
 
     } catch (error: any) {

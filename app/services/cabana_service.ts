@@ -114,54 +114,38 @@ export class CabanaService {
     return !reservaConflictiva
   }
 
-  async reservarCabana(idCabana: number) {
+  async reservar(idCabana: number) {
     const cabana = await Cabana.findOrFail(idCabana)
 
-    // 1. Hidratamos el estado actual
     const estadoActual = EstadoCabanaFactory.fabricar(cabana.idEstado)
 
-    // 2. Intentamos la transición. Si es inválida, lanzará un Error aquí mismo.
     const nuevoEstadoId = estadoActual.reservar()
 
-    // 3. Si todo salió bien, actualizamos la base de datos
     cabana.idEstado = nuevoEstadoId
     await cabana.save()
 
     return cabana
   }
 
-  async liberarCabana(idCabana: number) {
+  async liberar(idCabana: number) {
     const cabana = await Cabana.findOrFail(idCabana)
 
-    // 1. Hidratamos el estado actual
     const estadoActual = EstadoCabanaFactory.fabricar(cabana.idEstado)
 
-    // 2. Intentamos la transición. Si es inválida, lanzará un Error aquí mismo.
     const nuevoEstadoId = estadoActual.liberar()
 
-    // 3. Si todo salió bien, actualizamos la base de datos
     cabana.idEstado = nuevoEstadoId
     await cabana.save()
 
     return cabana
   }
 
-  async establecerMantenimiento(idCabana: number) {
+  async ponerEnMantenimiento(idCabana: number) {
 
     const cabana = await Cabana.findOrFail(idCabana)
     const estadoActual = EstadoCabanaFactory.fabricar(cabana.idEstado)
 
     cabana.idEstado = estadoActual.ponerEnMantenimiento()
-    await cabana.save()
-
-    return cabana
-  }
-
-  async finalizarMantenimiento(idCabana: number) {
-    const cabana = await Cabana.findOrFail(idCabana)
-    const estadoActual = EstadoCabanaFactory.fabricar(cabana.idEstado)
-
-    cabana.idEstado = estadoActual.liberar() // Vuelve a disponible
     await cabana.save()
 
     return cabana
