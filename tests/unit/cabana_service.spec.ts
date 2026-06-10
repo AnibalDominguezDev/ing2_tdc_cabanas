@@ -3,6 +3,8 @@ import { CabanaService } from '#services/cabana_service'
 import Cabana from '#models/cabana'
 import Servicio from '#models/servicio'
 import db from '@adonisjs/lucid/services/db'
+import vine from '@vinejs/vine'
+import { validadorCabana } from '#validators/cabana'
 
 test.group('CabanaService', (group) => {
   let cabanaService: CabanaService
@@ -86,7 +88,7 @@ test.group('CabanaService', (group) => {
   test('reservarCabana - debe transicionar de Disponible (1) a Ocupada (3)', async ({ assert }) => {
     const cabana = await Cabana.create({ nombre: 'Test', idEstado: 1, precioPorNoche: 100 })
 
-    const cabanaActualizada = await cabanaService.reservarCabana(cabana.id)
+    const cabanaActualizada = await cabanaService.reservar(cabana.id)
     assert.equal(cabanaActualizada.idEstado, 3)
   })
 
@@ -95,21 +97,21 @@ test.group('CabanaService', (group) => {
 
     // Al intentar transicionar un estado inválido, el Patrón State debe arrojar un error
     await assert.rejects(async () => {
-      await cabanaService.reservarCabana(cabana.id)
+      await cabanaService.reservar(cabana.id)
     })
   })
 
   test('liberarCabana - debe transicionar de Ocupada (3) a Disponible (1)', async ({ assert }) => {
     const cabana = await Cabana.create({ nombre: 'Test', idEstado: 3, precioPorNoche: 100 })
 
-    const cabanaActualizada = await cabanaService.liberarCabana(cabana.id)
+    const cabanaActualizada = await cabanaService.liberar(cabana.id)
     assert.equal(cabanaActualizada.idEstado, 1)
   })
 
   test('establecerMantenimiento - debe transicionar de Disponible (1) a Mantenimiento (2)', async ({ assert }) => {
     const cabana = await Cabana.create({ nombre: 'Test', idEstado: 1, precioPorNoche: 100 })
 
-    const cabanaActualizada = await cabanaService.establecerMantenimiento(cabana.id)
+    const cabanaActualizada = await cabanaService.ponerEnMantenimiento(cabana.id)
     assert.equal(cabanaActualizada.idEstado, 2)
   })
 
@@ -119,5 +121,112 @@ test.group('CabanaService', (group) => {
 
     const cabanaActualizada = await cabanaService.eliminar(cabana.id)
     assert.equal(cabanaActualizada.idEstado, 4)
+  })
+})
+
+test.group('Agregar Cabaña - Validaciones QA', (group) => {
+  let cabanaService: CabanaService
+
+  group.setup(() => {
+    cabanaService = new CabanaService()
+  })
+
+  group.each.setup(async () => {
+    await db.beginGlobalTransaction()
+    return () => db.rollbackGlobalTransaction()
+  })
+
+  // --- CASO 1: ÉXITO ---
+  test('Caso 1: Registro normal de una cabaña con datos válidos y servicios', async ({ assert }) => {
+    const wifi = await Servicio.create({ nombre: 'Wifi' })
+    const parrilla = await Servicio.create({ nombre: 'Parrilla' })
+
+    const payload = {
+      nombre: 'Cabaña Sol',
+      descripcion: 'Cabaña familiar',
+      habitaciones: 2,
+      capacidad: 4,
+      precio_por_noche: 25000
+    }
+
+
+    const datosValidados = await validadorCabana.validate(payload)
+    const cabana = await cabanaService.agregarCabana(datosValidados, [wifi.id, parrilla.id], null)
+
+    assert.isTrue(cabana.$isPersisted)
+    assert.equal(cabana.nombre, 'Cabaña Sol')
+  })
+
+  // --- CASOS DE ERROR (VALIDACIONES RECHAZADAS) ---
+
+  test('Caso 2: Registro con nombre vacío debe fallar', async ({ assert }) => {
+    const payload = {
+      nombre: '', // Inválido
+      descripcion: 'Cabaña familiar',
+      habitaciones: 2,
+      capacidad: 4,
+      precio_por_noche: 25000
+    }
+
+    await assert.rejects(async () => {
+
+      await validadorCabana.validate(payload)
+    })
+  })
+
+  test('Caso 3: Registro con descripción vacía debe fallar', async ({ assert }) => {
+    const payload = {
+      nombre: 'Cabaña Luna',
+      descripcion: null, // Inválido
+      habitaciones: 2,
+      capacidad: 4,
+      precio_por_noche: 25000
+    }
+
+    await assert.rejects(async () => {
+      await validadorCabana.validate(payload)
+    })
+  })
+
+  test('Caso 4: Registro con cantidad de habitaciones inválida (0) debe fallar', async ({ assert }) => {
+    const payload = {
+      nombre: 'Cabaña Norte',
+      descripcion: 'Cabaña cómoda',
+      habitaciones: 0, // Inválido
+      capacidad: 4,
+      precio_por_noche: 25000
+    }
+
+    await assert.rejects(async () => {
+      await validadorCabana.validate(payload)
+    })
+  })
+
+  test('Caso 5: Registro con capacidad inválida (0) debe fallar', async ({ assert }) => {
+    const payload = {
+      nombre: 'Cabaña Sur',
+      descripcion: 'Cabaña cómoda',
+      habitaciones: 2,
+      capacidad: 0, // Inválido
+      precio_por_noche: 25000
+    }
+
+    await assert.rejects(async () => {
+      await validadorCabana.validate(payload)
+    })
+  })
+
+  test('Caso 6: Registro con precio por noche inválido (negativo) debe fallar', async ({ assert }) => {
+    const payload = {
+      nombre: 'Cabaña Río',
+      descripcion: 'Cabaña cómoda',
+      habitaciones: 2,
+      capacidad: 4,
+      precio_por_noche: -1000 // Inválido
+    }
+
+    await assert.rejects(async () => {
+      await validadorCabana.validate(payload)
+    })
   })
 })

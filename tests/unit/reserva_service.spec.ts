@@ -5,6 +5,8 @@ import Cabana from '#models/cabana'
 import Reserva from '#models/reserva'
 import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
+import Usuario from '#models/usuario'
+import { ReservaValidator } from '#validators/reserva'
 
 test.group('ReservaService', (group) => {
   let reservaService: ReservaService
@@ -169,5 +171,164 @@ test.group('ReservaService', (group) => {
     assert.equal(estado, 'finalizado')
     const reservaActualizada = await Reserva.findOrFail(reserva.id)
     assert.equal(reservaActualizada.idEstadoReserva, 3)
+  })
+})
+
+
+test.group('Registrar Reserva - Validaciones QA', (group) => {
+  let reservaService: ReservaService
+  let cabanaService: CabanaService
+  let cabanaBase: Cabana
+  let usuarioBase: Usuario
+
+  group.setup(() => {
+    cabanaService = new CabanaService()
+    reservaService = new ReservaService(cabanaService)
+  })
+
+  // Transacción global y datos base para cada test
+  group.each.setup(async () => {
+    await db.beginGlobalTransaction()
+
+    // Creamos datos válidos que usaremos en la mayoría de los casos
+    usuarioBase = await Usuario.create({
+      nombre: 'Benjamin', apellido: 'Admin', dni: '11111111',
+      email: 'benjamin@test.com', contrasena: '123456', idRol: 1
+    })
+
+    cabanaBase = await Cabana.create({
+      nombre: 'Cabaña 1', capacidad: 4, precioPorNoche: 10000, idEstado: 1
+    })
+
+    return () => db.rollbackGlobalTransaction()
+  })
+
+  // --- CASO 1: ÉXITO ---
+  test('Caso 1: Registro normal de una reserva con datos válidos', async ({ assert }) => {
+    const payload = {
+      cabanaId: cabanaBase.id,
+      usuarioId: usuarioBase.idUsuario,
+      checkin: '2026-10-01',
+      checkout: '2026-10-03',
+      nombre: 'Juan',
+      apellido: 'Pérez',
+      documento: '12345678',
+      telefono: '3794000000'
+    }
+
+    const reserva = await reservaService.registrarReserva(payload)
+
+    assert.isTrue(reserva.$isPersisted)
+    assert.equal(reserva.cabanaId, cabanaBase.id)
+  })
+
+  // --- CASO 2: CABAÑA INEXISTENTE ---
+  test('Caso 2: Registro de reserva con cabaña inexistente debe fallar', async ({ assert }) => {
+    const payload = {
+      cabanaId: 999, // Inválido
+      usuarioId: usuarioBase.idUsuario,
+      checkin: '2026-10-04',
+      checkout: '2026-10-06',
+      nombre: 'Juan',
+      apellido: 'Pérez',
+      documento: '12345678'
+    }
+
+    // El servicio hará un Cabana.findOrFail(999) y rechazará la promesa
+    await assert.rejects(async () => {
+      await reservaService.registrarReserva(payload)
+    })
+  })
+
+  // --- CASO 3: USUARIO INEXISTENTE ---
+  test('Caso 3: Registro de reserva con usuario inexistente debe fallar', async ({ assert }) => {
+    const payload = {
+      cabanaId: cabanaBase.id,
+      usuarioId: 999, // Inválido
+      checkin: '2026-10-07',
+      checkout: '2026-10-09',
+      nombre: 'Juan',
+      apellido: 'Pérez',
+      documento: '12345678'
+    }
+
+    // Al intentar guardar, la llave foránea de MySQL rechazará el id_usuario inexistente
+    await assert.rejects(async () => {
+      await reservaService.registrarReserva(payload)
+    })
+  })
+
+  // --- CASO 4: CAPACIDAD MÁXIMA ---
+  test('Caso 4: Registro de reserva alcanzando capacidad máxima debe ser exitoso', async ({ assert }) => {
+    // Backend test: Simulamos enviar al titular + 3 acompañantes (4 en total, límite de la cabaña)
+    const payload = {
+      cabanaId: cabanaBase.id,
+      usuarioId: usuarioBase.idUsuario,
+      checkin: '2026-10-10',
+      checkout: '2026-10-12',
+      nombre: 'Titular',
+      apellido: 'Uno',
+      documento: '11111111',
+      huespedes: [
+        { nombre: 'Acomp', apellido: 'Dos', documento: '22222222' },
+        { nombre: 'Acomp', apellido: 'Tres', documento: '33333333' },
+        { nombre: 'Acomp', apellido: 'Cuatro', documento: '44444444' }
+      ]
+    }
+
+    const reserva = await reservaService.registrarReserva(payload)
+    await reserva.load('huespedes')
+
+    assert.isTrue(reserva.$isPersisted)
+    assert.equal(reserva.huespedes.length, 4) // El backend procesó correctamente el máximo
+  })
+
+  // --- CASO 5: DNI INVÁLIDO ---
+  test('Caso 5: Registro con DNI inválido debe fallar en el validador', async ({ assert }) => {
+    const payload = {
+      cabanaId: cabanaBase.id,
+      checkin: '2026-10-13',
+      checkout: '2026-10-15',
+      nombre: 'Juan',
+      apellido: 'Pérez',
+      documento: '123', // Inválido (VineJS debería bloquearlo si tienes regla de 8 caracteres)
+      telefono: '3794000000'
+    }
+
+    // El frontend fallaría al intentar pasar por VineJS
+    await assert.rejects(async () => {
+      await ReservaValidator.validate(payload)
+    })
+  })
+
+  // --- CASO 6: FECHAS OCUPADAS (OVERBOOKING) ---
+  test('Caso 6: Registro en fechas ya ocupadas debe fallar', async ({ assert }) => {
+    // 1. Creamos la reserva original
+    const payloadOriginal = {
+      cabanaId: cabanaBase.id,
+      usuarioId: usuarioBase.idUsuario,
+      checkin: '2026-10-01',
+      checkout: '2026-10-03',
+      nombre: 'Primero',
+      apellido: 'Ocupante',
+      documento: '11111111'
+    }
+    await reservaService.registrarReserva(payloadOriginal)
+
+    // 2. Intentamos crear otra reserva en la misma cabaña con fechas solapadas
+    const payloadSolapado = {
+      cabanaId: cabanaBase.id,
+      usuarioId: usuarioBase.idUsuario,
+      checkin: '2026-10-01', // Mismas fechas
+      checkout: '2026-10-03',
+      nombre: 'Segundo',
+      apellido: 'Intento',
+      documento: '22222222'
+    }
+
+    // Tu ReservaService debe lanzar el Error de disponibilidad
+    await assert.rejects(async () => {
+      await reservaService.registrarReserva(payloadSolapado)
+    })
   })
 })
