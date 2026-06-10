@@ -67,7 +67,7 @@ export class ReservaService {
       await reserva.save()
 
       // 4. Gestionar los Huéspedes y vincularlos a la reserva
-      // Asumimos que datos.huespedes es un array de objetos: [{ dni: '123', nombre: 'Juan'... }, ...]
+
       const huespedesIds: number[] = []
 
       // Nos aseguramos de que sea un array válido (si por alguna razón es undefined, usamos un array vacío [])
@@ -104,7 +104,6 @@ export class ReservaService {
         await reserva.related('huespedes').attach(huespedesIds)
       }
 
-      // 5. Opcional: Cambiar el estado de la Cabaña usando el Patrón State
       //await this.cabanaService.reservarCabana(cabana.id)
 
       // 6. Confirmar la transacción
