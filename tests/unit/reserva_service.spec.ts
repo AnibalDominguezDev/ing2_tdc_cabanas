@@ -125,8 +125,10 @@ test.group('ReservaService', (group) => {
   // --- TESTS DEL SINCRONIZADOR DE ESTADOS DE RESERVA ---
 
   test('calcularEstado - debe marcar como PENDIENTE una reserva futura', async ({ assert }) => {
+    const cabana = await Cabana.create({ nombre: 'Cabaña VIP', idEstado: 1, precioPorNoche: 200 })
+
     const reserva = await Reserva.create({
-      cabanaId: 1, // Usamos ID dummy, no necesitamos la cabaña real aquí
+      cabanaId: cabana.id,
       fechaInicio: DateTime.now().plus({ days: 5 }), // Empieza en 5 días
       fechaFin: DateTime.now().plus({ days: 10 }),
       precioTotal: 1000,
@@ -142,8 +144,11 @@ test.group('ReservaService', (group) => {
   })
 
   test('calcularEstado - debe marcar como ACTIVO una reserva en curso', async ({ assert }) => {
+
+    const cabana = await Cabana.create({ nombre: 'Cabaña VIP', idEstado: 1, precioPorNoche: 200 })
+
     const reserva = await Reserva.create({
-      cabanaId: 1,
+      cabanaId: cabana.id,
       fechaInicio: DateTime.now().minus({ days: 2 }), // Empezó hace 2 días
       fechaFin: DateTime.now().plus({ days: 2 }),     // Termina en 2 días
       precioTotal: 1000,
@@ -158,8 +163,10 @@ test.group('ReservaService', (group) => {
   })
 
   test('calcularEstado - debe marcar como FINALIZADO una reserva antigua', async ({ assert }) => {
+    const cabana = await Cabana.create({ nombre: 'Cabaña VIP', idEstado: 1, precioPorNoche: 200 })
+
     const reserva = await Reserva.create({
-      cabanaId: 1,
+      cabanaId: cabana.id,
       fechaInicio: DateTime.now().minus({ days: 10 }), // Empezó hace 10 días
       fechaFin: DateTime.now().minus({ days: 5 }),     // Terminó hace 5 días
       precioTotal: 1000,

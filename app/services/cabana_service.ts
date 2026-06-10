@@ -45,9 +45,9 @@ export class CabanaService {
     })
 
     if (imgFile) {
-      const fileName = `${datosCabana.nombre}.${imgFile.extname}`
-      await imgFile.moveToDisk(`cabanas_img/${fileName}`)
-      cabana.imgUrl = `cabanas_img/${fileName}`
+      const path = `cabanas_img/${stringHelpers.uuid()}.${imgFile.extname}`
+      await imgFile.moveToDisk(path)
+      cabana.imgUrl = path
       await cabana.save()
     }
 

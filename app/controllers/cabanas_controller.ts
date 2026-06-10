@@ -34,6 +34,7 @@ export default class CabanasController {
     } catch (error) {
       session.flash(request.except(['imagen', '_csrf']))
       session.flash('error', 'Error: Ocurrió un error al insertar la cabaña.')
+      console.log({ error })
       return response.redirect().back()
     }
   }
