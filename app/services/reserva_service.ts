@@ -183,10 +183,10 @@ export class ReservaService {
       reserva.idEstadoReserva = idEstadoCalculado
       await reserva.save()
 
-      console.log(`[Sincronizador] Reserva ID ${reserva.id} actualizada físicamente a: ${estadoCalculado}`)
+      //console.log(`[Sincronizador] Reserva ID ${reserva.id} actualizada físicamente a: ${estadoCalculado}`)
     } else {
       // Si es igual, no hace nada (se salta el guardado)
-      console.log(`[Sincronizador] Reserva ID ${reserva.id} ya estaba sincronizada como: ${estadoCalculado}`)
+      //console.log(`[Sincronizador] Reserva ID ${reserva.id} ya estaba sincronizada como: ${estadoCalculado}`)
     }
 
     // 4. Retornamos el estado de texto
