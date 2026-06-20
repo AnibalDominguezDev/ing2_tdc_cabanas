@@ -22,7 +22,7 @@ export class CabanaService {
 
   async obtenerActivas() {
     return await Cabana.query()
-      .where('id_estado', 1)
+      .where('id_estado', 1).orWhere('id_estado', 3)
       .preload('servicios')
   }
 

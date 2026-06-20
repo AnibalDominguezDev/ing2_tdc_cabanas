@@ -147,7 +147,6 @@ export class ReservaService {
 
 
   async calcularEstado(idReserva: number): Promise<'pendiente' | 'activo' | 'finalizado'> {
-
     const reserva = await Reserva.findOrFail(idReserva)
 
     // 2. Calculamos el estado basado en el tiempo actual
@@ -179,17 +178,31 @@ export class ReservaService {
 
     // 3. Comparamos con el estado actual de la base de datos
     if (reserva.idEstadoReserva !== idEstadoCalculado) {
-      // Si es distinto, modificamos el registro y guardamos
+      // Guardamos el nuevo estado de la reserva
       reserva.idEstadoReserva = idEstadoCalculado
       await reserva.save()
+      try {
+        // --- NUEVA LÓGICA: Sincronización con el Patrón State de Cabaña ---
+        if (idEstadoCalculado === 2) {
+          // La reserva pasó de pendiente a ACTIVA -> Ocupamos la cabaña
+          await this.cabanaService.reservar(reserva.cabanaId)
+          // console.log(`[Sincronizador] Cabaña ID ${reserva.cabanaId} marcada como Ocupada.`)
+        }
+        else if (idEstadoCalculado === 3) {
+          // La reserva pasó de activa a FINALIZADA -> Liberamos la cabaña
+          await this.cabanaService.liberar(reserva.cabanaId)
+          // console.log(`[Sincronizador] Cabaña ID ${reserva.cabanaId} marcada como Disponible.`)
+        }
 
-      //console.log(`[Sincronizador] Reserva ID ${reserva.id} actualizada físicamente a: ${estadoCalculado}`)
-    } else {
-      // Si es igual, no hace nada (se salta el guardado)
-      //console.log(`[Sincronizador] Reserva ID ${reserva.id} ya estaba sincronizada como: ${estadoCalculado}`)
+      } catch (error) {
+        console.log({ error })
+      } finally {
+        return estadoCalculado
+      }
+
     }
 
-    // 4. Retornamos el estado de texto
+
     return estadoCalculado
   }
 }

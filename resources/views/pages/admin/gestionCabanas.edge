@@ -118,6 +118,12 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-[#8A352F]"></span>
                             Eliminado
                         </span>
+                        @elseif(cabin.nombreEstado === 'Ocupada')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#8A352F] uppercase bg-[#FCEDEB] border border-[#F2D6D3] rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#8A352F]"></span>
+                            Ocupada
+                        </span>
                         @elseif(cabin.nombreEstado === 'Mantenimiento')
                         <span
                             class="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#7D5537] uppercase bg-[#F6EBE1] border border-[#EADDCE] rounded-full">

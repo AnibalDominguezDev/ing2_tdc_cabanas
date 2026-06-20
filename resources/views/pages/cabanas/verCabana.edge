@@ -22,7 +22,7 @@
             @else
             <span
                 class="inline-block px-3 py-1 mb-5 text-[10px] font-bold tracking-widest text-white uppercase bg-[gray] rounded-full">
-                No disponible
+                No disponible para la fecha actual
             </span>
             @endif
 
@@ -187,7 +187,7 @@
                 </div>
 
 
-                @if(cabana.idEstado === 1)
+                @if(cabana.idEstado === 1 || cabana.idEstado === 3)
                 <a href="{{ urlFor('reservas.store', { slug: cabana.slug }) }}"
                     class="w-full block text-center py-3.5 bg-[#1B3B32] hover:bg-[#122822] text-white text-sm font-bold tracking-wider uppercase rounded-lg transition-colors">
                     Reservar Ahora

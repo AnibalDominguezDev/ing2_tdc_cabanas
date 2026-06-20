@@ -1,3 +1,6 @@
+
+-- Procedimiento ObtenerEstadisticasGenerales
+
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS obtenerEstadisticasGenerales $$
@@ -31,6 +34,8 @@ DELIMITER ;
 --CALL obtenerEstadisticasGenerales();
 
 DELIMITER //
+
+-- Procedimiento ObtenerEstadisticas
 
 CREATE PROCEDURE obtenerEstadisticasSecundarias()
 BEGIN
@@ -75,5 +80,64 @@ BEGIN
         v_cabana_estrella AS cabana_estrella,
         v_ingreso_por_huesped AS ingreso_por_huesped;
 END //
+
+DELIMITER ;
+
+-- Procedimiento AgregarCabana
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS agregarCabana $$
+
+CREATE PROCEDURE agregarCabana(
+    IN p_nombre VARCHAR(254),
+    IN p_descripcion VARCHAR(800),
+    IN p_capacidad INT,
+    IN p_habitaciones INT,
+    IN p_precio_por_noche DECIMAL(12,2),
+    IN p_img_url VARCHAR(255),
+    OUT p_id_cabana INT -- Ahora espera 7 parámetros en total
+)
+BEGIN
+    DECLARE v_slug VARCHAR(254);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    SET v_slug = LOWER(REPLACE(TRIM(p_nombre), ' ', '-'));
+
+    INSERT INTO cabana (
+        nombre,
+        descripcion,
+        precio_por_noche,
+        capacidad,
+        habitaciones,
+        slug,
+        img_url,
+        id_estado,
+        created_at,
+        updated_at
+    )
+    VALUES (
+        p_nombre,
+        p_descripcion,
+        p_precio_por_noche,
+        p_capacidad,
+        p_habitaciones,
+        v_slug,
+        p_img_url,
+        1,
+        NOW(),
+        NOW()
+    );
+
+    SET p_id_cabana = LAST_INSERT_ID();
+
+    COMMIT;
+END $$
 
 DELIMITER ;

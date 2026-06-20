@@ -18,6 +18,21 @@ router.on('/').render('pages/home').as('home')
 router.get('/cabanas', [controllers.Cabanas, 'listar']).as('cabanas')
 router.get('/cabana/:slug', [controllers.Cabanas, 'mostrar']).as('cabanas.mostrar')
 
+// 1. Importación diferida (Lazy loading) recomendada en AdonisJS 6
+const ApiCabanasController = () => import('#controllers/api_cabanas_controller')
+
+// 2. Agrupamos todas las rutas de la API bajo el prefijo /api/v1
+router.group(() => {
+
+  // Endpoint: POST /api/v1/cabanas
+  router.post('/cabanas', [ApiCabanasController, 'store'])
+
+  // Aquí podrás agregar más endpoints en el futuro:
+  // router.get('/cabanas', ...)
+  // router.put('/cabanas/:id', ...)
+
+}).prefix('/api/v1');
+
 router
   .group(() => {
     router.get('/gestion', [controllers.Cabanas, 'admin']).as('gestion')
