@@ -45,19 +45,16 @@ BEGIN
     DECLARE v_cabana_estrella VARCHAR(255) DEFAULT 'Sin datos aún';
     DECLARE v_ingreso_por_huesped DECIMAL(10,2) DEFAULT 0.00;
 
-    -- 1. Nuevas reservas en los últimos 7 días
-    -- Asegúrate de que 'created_at' sea el nombre de tu columna de fecha
+
     SELECT COUNT(*) INTO v_nuevas_reservas
     FROM reservas
     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY);
 
-    -- 2. Cabañas en mantenimiento (Asumiendo que idEstado = 3 es mantenimiento)
     SELECT COUNT(*) INTO v_en_mantenimiento
     FROM cabana
     WHERE id_estado = 2;
 
-    -- 3. Cabaña Estrella (La más reservada)
-    -- Une la tabla reservas con cabanas para obtener el nombre
+
     SET v_cabana_estrella = IFNULL((
         SELECT c.nombre
         FROM reservas r
@@ -67,13 +64,12 @@ BEGIN
         LIMIT 1
     ), 'Sin datos aún');
 
-    -- 4. Ingreso por Reserva/Huésped (Total ingresos / Cantidad de reservas)
   
     SELECT IFNULL(SUM(precio_total) / NULLIF(COUNT(*), 0), 0) INTO v_ingreso_por_huesped
     FROM reservas;
     
 
-    -- Finalmente, devolvemos las 4 columnas con los nombres exactos que necesitas
+
     SELECT 
         v_nuevas_reservas AS nuevas_reservas_semana,
         v_en_mantenimiento AS cabanas_en_mantenimiento,
@@ -95,7 +91,7 @@ CREATE PROCEDURE agregarCabana(
     IN p_habitaciones INT,
     IN p_precio_por_noche DECIMAL(12,2),
     IN p_img_url VARCHAR(255),
-    OUT p_id_cabana INT -- Ahora espera 7 parámetros en total
+    OUT p_id_cabana INT 
 )
 BEGIN
     DECLARE v_slug VARCHAR(254);
