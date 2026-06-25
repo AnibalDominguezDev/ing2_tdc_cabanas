@@ -67,7 +67,12 @@
 
                 </div>
 
-
+                @if(flashMessages.has('error'))
+                <div x-cloak
+                    class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-4 text-sm font-medium mt-4">
+                    Verifique los datos resaltados e intentelo de nuevo.
+                </div>
+                @end
                 <div>
                     <div>
                         <div class="flex items-center justify-between mb-4">
@@ -80,6 +85,8 @@
                                 </svg>
                                 <h3 class="text-xl font-serif text-[#1B3B32]">Información de los Huéspedes</h3>
                             </div>
+
+
 
                             <button type="button" x-show="huespedes.length < maxhuespedes" x-on:click="addAcompanante()"
                                 class="text-[10px] font-bold tracking-wider text-gray-400 uppercase hover:text-[#1B3B32] transition-colors flex items-center gap-1">
@@ -97,7 +104,7 @@
                                     <label
                                         class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Nombre</label>
                                     <input type="text" name="nombre" placeholder="Ej. Julian"
-                                        value="{{session.get('usuario_nombre') || old('nombre') || '' }}"
+                                        value=" {{ old('nombre') || '' }}"
                                         class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
                                         :class="erroresServidor.nombre ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
                                     <template x-if="erroresServidor.nombre">
@@ -109,7 +116,7 @@
                                     <label
                                         class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">Apellido</label>
                                     <input type="text" name="apellido" placeholder="Ej. Moretti"
-                                        value="{{ session.get('usuario_apellido') || old('apellido') || '' }}"
+                                        value="{{ old('apellido') || '' }}"
                                         class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
                                         :class="erroresServidor.apellido ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
                                     <template x-if="erroresServidor.apellido">
@@ -121,7 +128,7 @@
                                     <label
                                         class="block text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1">DNI</label>
                                     <input type="text" name="documento" placeholder="Documento de identidad"
-                                        value="{{ session.get('usuario_dni') || old('documento') || '' }}"
+                                        value="{{ old('documento') || '' }}"
                                         class="w-full bg-white border rounded-md px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors shadow-sm"
                                         :class="erroresServidor.documento ? 'border-red-500 ring-1 ring-red-500' : 'border-transparent focus:border-[#1B3B32] focus:ring-[#1B3B32]'">
                                     <template x-if="erroresServidor.documento">

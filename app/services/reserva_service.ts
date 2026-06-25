@@ -39,8 +39,6 @@ export class ReservaService {
         throw new Error('La fecha de fin debe ser mayor a la fecha de inicio.')
       }
 
-      // 2. Nos aseguramos de que el precio sea un número (por si la BD devuelve un string o undefined)
-      // Si cabana.precioPorNoche es undefined, Number() devuelve NaN. Lo atraparemos en el paso 3.
       const precio = Number(cabana.precioPorNoche)
 
       // 3. Calculamos y validamos ANTES de asignar al modelo

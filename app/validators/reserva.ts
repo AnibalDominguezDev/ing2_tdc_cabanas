@@ -36,8 +36,8 @@ export const ReservaValidator = vine.create(
     checkin: vine.date({ formats: ['YYYY-MM-DD'] }),
     checkout: vine.date({ formats: ['YYYY-MM-DD'] }).afterField('checkin'),
 
-    nombre: vine.string().trim().minLength(1).maxLength(90),
-    apellido: vine.string().trim().minLength(1).maxLength(90),
+    nombre: vine.string().trim().minLength(3).maxLength(90),
+    apellido: vine.string().trim().minLength(3).maxLength(90),
     documento: vine.string().trim().regex(/^[0-9]{8}$/),
     telefono: vine.string().trim().regex(/^$|^[0-9]{10}$/).optional(),
 
